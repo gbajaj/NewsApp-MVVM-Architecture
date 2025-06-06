@@ -7,6 +7,8 @@ import com.gauravbajaj.newsapp.data.repository.NewsSourcesRepository
 import com.gauravbajaj.newsapp.data.repository.TopHeadlineRepository
 import com.gauravbajaj.newsapp.di.ActivityContext
 import com.gauravbajaj.newsapp.ui.base.ViewModelProviderFactory
+import com.gauravbajaj.newsapp.ui.country_sources.CountryAdapter
+import com.gauravbajaj.newsapp.ui.country_sources.CountrySourcesViewModel
 import com.gauravbajaj.newsapp.ui.news_sources.NewsSourcesAdapter
 import com.gauravbajaj.newsapp.ui.news_sources.NewsSourcesViewModel
 import com.gauravbajaj.newsapp.ui.topheadlines.TopHeadlinesAdapter
@@ -44,5 +46,17 @@ class ActivityModule(private val activity: AppCompatActivity) {
 
     @Provides
     fun provideNewsSourcesAdapter() = NewsSourcesAdapter(ArrayList())
+
+
+    @Provides
+    fun provideCountrySourcesViewModel(): CountrySourcesViewModel {
+        return ViewModelProvider(activity,
+            ViewModelProviderFactory(CountrySourcesViewModel::class) {
+                CountrySourcesViewModel()
+            })[CountrySourcesViewModel::class.java]
+    }
+    
+    @Provides
+    fun provideCountryAdapter() = CountryAdapter()
 
 }

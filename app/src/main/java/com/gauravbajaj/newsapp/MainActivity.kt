@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.gauravbajaj.newsapp.ui.country_sources.CountrySourcesActivity
 import com.gauravbajaj.newsapp.ui.news_sources.NewsSourcesActivity
 import com.gauravbajaj.newsapp.ui.topheadlines.TopHeadlineActivity
 
@@ -28,5 +29,9 @@ class MainActivity : AppCompatActivity() {
 
     fun onNewsSourcesClick(view: View) {
         startActivity(Intent(this, NewsSourcesActivity::class.java))
+    }
+    
+    fun onCountriesClick(view: View) {
+        startActivity(Intent(this, CountrySourcesActivity::class.java))
     }
 }

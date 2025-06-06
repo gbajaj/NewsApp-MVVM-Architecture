@@ -12,6 +12,8 @@
     <string name="error_no_internet">No internet connection. Please check your network settings.</string>
     <string name="error_no_internet_title">No Internet Connection</string>
     <string name="retry">Retry</string>
+    <string name="action_next">Next</string>
+    <string name="select_country">Select Country</string>
     
     <!-- Top Headlines Activity -->
     <string name="error_loading_news">Error loading news. Please try again later.</string>

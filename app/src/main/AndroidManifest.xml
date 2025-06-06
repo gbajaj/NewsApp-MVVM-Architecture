@@ -41,6 +41,11 @@
             android:parentActivityName=".MainActivity">
         </activity>
 
+        <activity
+            android:name=".ui.country_sources.CountrySourcesActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity">
+        </activity>
     </application>
 
 </manifest>
