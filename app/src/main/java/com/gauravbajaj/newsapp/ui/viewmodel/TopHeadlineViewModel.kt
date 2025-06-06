@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.gauravbajaj.newsapp.data.model.Article
 import com.gauravbajaj.newsapp.data.repository.TopHeadlineRepository
 import com.gauravbajaj.newsapp.ui.base.UiState
+import com.gauravbajaj.newsapp.utils.AppConstant.COUNTRY
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
@@ -21,7 +22,7 @@ class TopHeadlineViewModel @Inject constructor(
     val uiState: StateFlow<UiState<List<Article>>> = _uiState
 
 
-    fun loadTopHeadlines(country: String = "us") {
+    fun loadTopHeadlines(country: String = COUNTRY) {
         viewModelScope.launch {
             repository.getTopHeadlines(country).catch {
                 _uiState.value = UiState.Error(it.message)
