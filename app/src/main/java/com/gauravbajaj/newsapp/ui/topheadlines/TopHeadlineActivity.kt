@@ -14,7 +14,6 @@ import com.gauravbajaj.newsapp.databinding.ActivityTopHeadlinesBinding
 import com.gauravbajaj.newsapp.di.component.DaggerActivityComponent
 import com.gauravbajaj.newsapp.di.module.ActivityModule
 import com.gauravbajaj.newsapp.ui.base.UiState
-import com.gauravbajaj.newsapp.ui.viewmodel.TopHeadlineViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
