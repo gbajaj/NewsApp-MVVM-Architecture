@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.gauravbajaj.newsapp.ui.country_sources.CountrySourcesActivity
+import com.gauravbajaj.newsapp.ui.languages.LanguagesActivity
 import com.gauravbajaj.newsapp.ui.news_sources.NewsSourcesActivity
 import com.gauravbajaj.newsapp.ui.topheadlines.TopHeadlineActivity
 
@@ -33,5 +34,15 @@ class MainActivity : AppCompatActivity() {
     
     fun onCountriesClick(view: View) {
         startActivity(Intent(this, CountrySourcesActivity::class.java))
+    }
+    
+    fun onLanguagesClick(view: View) {
+        startActivity(
+            Intent(this, LanguagesActivity::class.java)
+        )
+    }
+
+    companion object {
+        private const val REQUEST_CODE_LANGUAGE_SELECTION = 1001
     }
 }

@@ -6,13 +6,16 @@ import androidx.lifecycle.ViewModelProvider
 import com.gauravbajaj.newsapp.data.repository.NewsSourcesRepository
 import com.gauravbajaj.newsapp.data.repository.TopHeadlineRepository
 import com.gauravbajaj.newsapp.di.ActivityContext
+import com.gauravbajaj.newsapp.di.ApplicationContext
 import com.gauravbajaj.newsapp.ui.base.ViewModelProviderFactory
 import com.gauravbajaj.newsapp.ui.country_sources.CountryAdapter
 import com.gauravbajaj.newsapp.ui.country_sources.CountrySourcesViewModel
+import com.gauravbajaj.newsapp.ui.languages.LanguageAdapter
+import com.gauravbajaj.newsapp.ui.languages.LanguagesViewModel
 import com.gauravbajaj.newsapp.ui.news_sources.NewsSourcesAdapter
 import com.gauravbajaj.newsapp.ui.news_sources.NewsSourcesViewModel
-import com.gauravbajaj.newsapp.ui.topheadlines.TopHeadlinesAdapter
 import com.gauravbajaj.newsapp.ui.topheadlines.TopHeadlineViewModel
+import com.gauravbajaj.newsapp.ui.topheadlines.TopHeadlinesAdapter
 import dagger.Module
 import dagger.Provides
 
@@ -58,5 +61,16 @@ class ActivityModule(private val activity: AppCompatActivity) {
     
     @Provides
     fun provideCountryAdapter() = CountryAdapter()
+
+    @Provides
+    fun provideLanguagesViewModel(@ApplicationContext context: Context): LanguagesViewModel {
+        return ViewModelProvider(activity,
+            ViewModelProviderFactory(LanguagesViewModel::class) {
+                LanguagesViewModel(context)
+            })[LanguagesViewModel::class.java]
+    }
+
+    @Provides
+    fun provideLanguageAdapter() = LanguageAdapter()
 
 }

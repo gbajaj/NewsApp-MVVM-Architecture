@@ -1,6 +1,19 @@
 <resources>
     <string name="app_name">NewsApp-MVVM-Architecture</string>
     
+    <!-- Language Selection -->
+    <string name="select_language">Select Language</string>
+    <string name="english">English</string>
+    <string name="spanish">Español</string>
+    <string name="french">Français</string>
+    <string name="german">Deutsch</string>
+    <string name="hindi">हिंदी</string>
+    <string name="arabic">العربية</string>
+    <string name="chinese">中文</string>
+    <string name="japanese">日本語</string>
+    <string name="russian">Русский</string>
+    <string name="portuguese">Português</string>
+    
     <!-- Main Activity Strings -->
     <string name="hello_world">Hello World!</string>
     <string name="top_headlines">Top Headlines</string>
