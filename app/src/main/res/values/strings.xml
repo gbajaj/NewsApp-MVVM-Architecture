@@ -1,3 +1,21 @@
 <resources>
     <string name="app_name">NewsApp-MVVM-Architecture</string>
+    
+    <!-- Main Activity Strings -->
+    <string name="hello_world">Hello World!</string>
+    <string name="top_headlines">Top Headlines</string>
+    <string name="news_sources">News Sources</string>
+    <string name="countries">Countries</string>
+    <string name="languages">Languages</string>
+    <string name="search">Search</string>
+    <string name="article_image">Article Image</string>
+    <string name="error_no_internet">No internet connection. Please check your network settings.</string>
+    <string name="error_no_internet_title">No Internet Connection</string>
+    <string name="retry">Retry</string>
+    
+    <!-- Top Headlines Activity -->
+    <string name="error_loading_news">Error loading news. Please try again later.</string>
+    <string name="no_articles_found">No articles found</string>
+    <string name="error_loading_image">Error loading image</string>
+    <string name="published_on">Published on %1$s</string>
 </resources>

@@ -1,4 +1,34 @@
 package com.gauravbajaj.newsapp.di.module
 
-class ActivityModule {
+import android.content.Context
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
+import com.gauravbajaj.newsapp.data.repository.TopHeadlineRepository
+import com.gauravbajaj.newsapp.di.ActivityContext
+import com.gauravbajaj.newsapp.ui.base.ViewModelProviderFactory
+import com.gauravbajaj.newsapp.ui.topheadlines.TopHeadlinesAdapter
+import com.gauravbajaj.newsapp.ui.viewmodel.TopHeadlineViewModel
+import dagger.Module
+import dagger.Provides
+
+@Module
+class ActivityModule(private val activity: AppCompatActivity) {
+
+    @ActivityContext
+    @Provides
+    fun provideContext(): Context {
+        return activity
+    }
+
+    @Provides
+    fun provideNewsListViewModel(topHeadlineRepository: TopHeadlineRepository): TopHeadlineViewModel {
+        return ViewModelProvider(activity,
+            ViewModelProviderFactory(TopHeadlineViewModel::class) {
+                TopHeadlineViewModel(topHeadlineRepository)
+            })[TopHeadlineViewModel::class.java]
+    }
+
+    @Provides
+    fun provideTopHeadlineAdapter() = TopHeadlinesAdapter(ArrayList())
+
 }
