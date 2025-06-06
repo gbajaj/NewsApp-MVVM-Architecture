@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
-    android:padding="16dp">
+    android:background="@color/white">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -17,8 +16,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:title="@string/select_language"
-        app:titleTextColor="@android:color/white" />
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:title="@string/select_language" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvLanguages"

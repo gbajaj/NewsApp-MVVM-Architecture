@@ -1,17 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:padding="16dp">
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:paddingVertical="12dp"
+    android:background="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true">
 
     <TextView
         android:id="@+id/tvLanguageName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textSize="16sp"
-        android:textColor="@android:color/black"
+        android:textColor="@color/black"
+        android:fontFamily="sans-serif-medium"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/tvLanguageCode"
@@ -23,7 +30,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textSize="14sp"
-        android:textColor="@android:color/darker_gray"
+        android:textColor="@color/gray_600"
         app:layout_constraintStart_toStartOf="@id/tvLanguageName"
         app:layout_constraintTop_toBottomOf="@id/tvLanguageName"
         tools:text="English" />
@@ -33,9 +40,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="14sp"
-        android:textColor="@android:color/darker_gray"
+        android:textColor="@color/gray_600"
         android:layout_marginStart="16dp"
         app:layout_constraintEnd_toStartOf="@+id/ivSelected"
+        android:layout_marginEnd="16dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         tools:text="en" />
@@ -46,6 +54,7 @@
         android:layout_height="24dp"
         android:visibility="gone"
         android:src="@drawable/ic_check"
+        android:tint="@color/purple_500"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
