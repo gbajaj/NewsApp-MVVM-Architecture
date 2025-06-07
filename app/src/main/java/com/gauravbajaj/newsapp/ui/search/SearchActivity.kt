@@ -12,6 +12,7 @@ import com.gauravbajaj.newsapp.di.component.DaggerActivityComponent
 import com.gauravbajaj.newsapp.di.module.ActivityModule
 import com.gauravbajaj.newsapp.ui.base.UiSearchState
 import com.gauravbajaj.newsapp.ui.base.UiState
+import com.gauravbajaj.newsapp.utils.CustomTabsHelper
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -89,6 +90,9 @@ class SearchActivity : AppCompatActivity() {
             layoutManager = LinearLayoutManager(this@SearchActivity)
             setHasFixedSize(true)
             this.adapter = this@SearchActivity.adapter
+        }
+        adapter.setOnItemClickListener { article ->
+            CustomTabsHelper.launchUrl(this, article.url)
         }
     }
     

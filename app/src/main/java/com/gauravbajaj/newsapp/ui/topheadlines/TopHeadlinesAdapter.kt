@@ -9,17 +9,40 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.gauravbajaj.newsapp.R
 import com.gauravbajaj.newsapp.data.model.Article
+import com.gauravbajaj.newsapp.utils.CustomTabsHelper
+import javax.inject.Inject
 
-class TopHeadlinesAdapter(
-    private val articleList: ArrayList<Article>
-) : RecyclerView.Adapter<TopHeadlinesAdapter.HeadlineViewHolder>() {
+/**
+ * Adapter for displaying a list of top headlines in a RecyclerView.
+ * Handles displaying article information and opening article URLs in Custom Tabs.
+ *
+ * @constructor Creates a new instance of the adapter with Dagger injection.
+ */
+class TopHeadlinesAdapter @Inject constructor() :
+    RecyclerView.Adapter<TopHeadlinesAdapter.HeadlineViewHolder>() {
 
     private val articles = mutableListOf<Article>()
+    private var onItemClickListener: ((Article) -> Unit)? = null
 
+    /**
+     * Updates the list of articles to be displayed.
+     *
+     * @param newArticles The new list of articles to display
+     */
     fun submitList(newArticles: List<Article>) {
         articles.clear()
         articles.addAll(newArticles)
         notifyDataSetChanged()
+    }
+
+    /**
+     * Sets a listener to be invoked when an article item is clicked.
+     *
+     * @param listener A lambda that will be called with the clicked [Article].
+     *                 Pass `null` to clear the existing listener.
+     */
+    fun setOnItemClickListener(listener: ((Article) -> Unit)?) {
+        onItemClickListener = listener
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HeadlineViewHolder {
@@ -31,12 +54,19 @@ class TopHeadlinesAdapter(
     override fun onBindViewHolder(holder: HeadlineViewHolder, position: Int) {
         val article = articles[position]
         holder.bind(article)
-        holder.itemView.setOnClickListener { }
     }
 
     override fun getItemCount(): Int = articles.size
 
     inner class HeadlineViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        init {
+            itemView.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    onItemClickListener?.let { it(articles[position]) }
+                }
+            }
+        }
         private val ivArticleImage: ImageView = itemView.findViewById(R.id.ivArticleImage)
         private val tvTitle: TextView = itemView.findViewById(R.id.tvTitle)
         private val tvDescription: TextView = itemView.findViewById(R.id.tvDescription)

@@ -107,6 +107,10 @@ class SearchResultsAdapter @Inject constructor() :
 
         init {
             itemView.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    onItemClickListener?.let { it(articles[position]) }
+                }
             }
         }
 

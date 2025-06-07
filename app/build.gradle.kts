@@ -73,6 +73,9 @@ dependencies {
     implementation(libs.dagger)
     kapt(libs.dagger.compiler)
     
+    // Browser (for Custom Tabs)
+    implementation(libs.androidx.browser)
+    
     // For Kotlin annotation processing
     kapt(libs.kotlinx.metadata.jvm)
 }

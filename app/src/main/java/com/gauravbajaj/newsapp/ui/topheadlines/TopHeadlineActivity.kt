@@ -14,6 +14,7 @@ import com.gauravbajaj.newsapp.databinding.ActivityTopHeadlinesBinding
 import com.gauravbajaj.newsapp.di.component.DaggerActivityComponent
 import com.gauravbajaj.newsapp.di.module.ActivityModule
 import com.gauravbajaj.newsapp.ui.base.UiState
+import com.gauravbajaj.newsapp.utils.CustomTabsHelper
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -45,11 +46,14 @@ class TopHeadlineActivity : AppCompatActivity() {
     }
 
     private fun setupUI() {
-        adapter = TopHeadlinesAdapter(ArrayList())
+        adapter = TopHeadlinesAdapter()
         binding.recyclerView.apply {
             layoutManager = LinearLayoutManager(this@TopHeadlineActivity)
             setHasFixedSize(true)
             adapter = this@TopHeadlineActivity.adapter
+        }
+        adapter.setOnItemClickListener { article ->
+            CustomTabsHelper.launchUrl(this, article.url)
         }
     }
 

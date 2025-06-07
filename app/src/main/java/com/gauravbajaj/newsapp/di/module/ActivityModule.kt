@@ -56,10 +56,10 @@ class ActivityModule(private val activity: AppCompatActivity) {
     }
 
     @Provides
-    fun provideTopHeadlineAdapter() = TopHeadlinesAdapter(ArrayList())
+    fun provideTopHeadlinesAdapter() = TopHeadlinesAdapter()
 
     @Provides
-    fun provideNewsSourcesAdapter() = NewsSourcesAdapter(ArrayList())
+    fun provideNewsSourcesAdapter() = NewsSourcesAdapter (ArrayList())
 
 
     @Provides
