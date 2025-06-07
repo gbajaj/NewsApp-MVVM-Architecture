@@ -21,8 +21,7 @@ class TopHeadlineActivity : AppCompatActivity() {
     @Inject
     lateinit var viewModel: TopHeadlineViewModel
 
-    @Inject
-    lateinit var adapter: TopHeadlinesAdapter
+    private lateinit var adapter: TopHeadlinesAdapter
 
     private lateinit var binding: ActivityTopHeadlinesBinding
 
@@ -47,11 +46,10 @@ class TopHeadlineActivity : AppCompatActivity() {
 
     private fun setupUI() {
         adapter = TopHeadlinesAdapter(ArrayList())
-        val recyclerView = binding.recyclerView
-        recyclerView.apply {
+        binding.recyclerView.apply {
             layoutManager = LinearLayoutManager(this@TopHeadlineActivity)
             setHasFixedSize(true)
-            this.adapter = this@TopHeadlineActivity.adapter
+            adapter = this@TopHeadlineActivity.adapter
         }
     }
 

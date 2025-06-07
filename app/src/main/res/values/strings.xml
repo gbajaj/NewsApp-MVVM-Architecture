@@ -45,4 +45,13 @@
     <string name="science">Science</string>
     <string name="sports">Sports</string>
     <string name="technology">Technology</string>
+    
+    <!-- Search Activity -->
+    <string name="search_news">Search News</string>
+    <string name="search_hint">Search for news…</string>
+    <string name="no_results_found">No results found</string>
+    <string name="error_search_failed">Failed to perform search. Please try again.</string>
+    <string name="empty_state_message">No content available</string>
+    <string name="error_generic">An error occurred</string>
+        <!-- Add other strings as needed -->
 </resources>

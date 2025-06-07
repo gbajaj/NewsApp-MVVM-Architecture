@@ -10,4 +10,6 @@
     
     <!-- Gray colors -->
     <color name="gray_600">#757575</color>
+    <color name="gray_400">#9E9E9E</color>
+
 </resources>

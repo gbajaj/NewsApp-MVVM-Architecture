@@ -29,4 +29,9 @@
         <item name="titleTextColor">?attr/colorOnPrimary</item>
         <item name="subtitleTextColor">?attr/colorOnPrimary</item>
     </style>
+    
+    <style name="Widget.App.SearchView" parent="Widget.Material3.SearchView">
+<!--        <item name="searchIconTint">?attr/colorPrimary</item>-->
+        <item name="closeIconTint">?attr/colorPrimary</item>
+    </style>
 </resources>

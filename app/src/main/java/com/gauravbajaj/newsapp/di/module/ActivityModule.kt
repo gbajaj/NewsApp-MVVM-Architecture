@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.gauravbajaj.newsapp.data.repository.NewsSourcesRepository
+import com.gauravbajaj.newsapp.data.repository.SearchRepository
 import com.gauravbajaj.newsapp.data.repository.TopHeadlineRepository
 import com.gauravbajaj.newsapp.di.ActivityContext
 import com.gauravbajaj.newsapp.di.ApplicationContext
@@ -14,6 +15,9 @@ import com.gauravbajaj.newsapp.ui.languages.LanguageAdapter
 import com.gauravbajaj.newsapp.ui.languages.LanguagesViewModel
 import com.gauravbajaj.newsapp.ui.news_sources.NewsSourcesAdapter
 import com.gauravbajaj.newsapp.ui.news_sources.NewsSourcesViewModel
+import com.gauravbajaj.newsapp.ui.search.SearchResultsAdapter
+
+import com.gauravbajaj.newsapp.ui.search.SearchViewModel
 import com.gauravbajaj.newsapp.ui.topheadlines.TopHeadlineViewModel
 import com.gauravbajaj.newsapp.ui.topheadlines.TopHeadlinesAdapter
 import dagger.Module
@@ -28,6 +32,13 @@ class ActivityModule(private val activity: AppCompatActivity) {
         return activity
     }
 
+    /**
+     * Provides the [TopHeadlineViewModel] to the [TopHeadlineActivity].
+     *
+     * @param topHeadlineRepository the [TopHeadlineRepository] to use for the view model.
+     *
+     * @return the [TopHeadlineViewModel].
+     */
     @Provides
     fun provideNewsListViewModel(topHeadlineRepository: TopHeadlineRepository): TopHeadlineViewModel {
         return ViewModelProvider(activity,
@@ -72,5 +83,17 @@ class ActivityModule(private val activity: AppCompatActivity) {
 
     @Provides
     fun provideLanguageAdapter() = LanguageAdapter()
+    
+    @Provides
+    fun provideSearchViewModel(searchRepository: SearchRepository): SearchViewModel {
+        return ViewModelProvider(activity,
+            ViewModelProviderFactory(SearchViewModel::class) {
+                SearchViewModel(searchRepository)
+            })[SearchViewModel::class.java]
+    }
+    
+    @Provides
+    fun provideSearchResultsAdapter(): SearchResultsAdapter = SearchResultsAdapter()
+
 
 }

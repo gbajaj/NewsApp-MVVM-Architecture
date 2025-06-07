@@ -54,7 +54,6 @@
         android:layout_height="24dp"
         android:visibility="gone"
         android:src="@drawable/ic_check"
-        android:tint="@color/purple_500"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"

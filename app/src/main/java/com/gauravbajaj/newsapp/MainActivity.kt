@@ -10,6 +10,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.gauravbajaj.newsapp.ui.country_sources.CountrySourcesActivity
 import com.gauravbajaj.newsapp.ui.languages.LanguagesActivity
 import com.gauravbajaj.newsapp.ui.news_sources.NewsSourcesActivity
+import com.gauravbajaj.newsapp.ui.search.SearchActivity
 import com.gauravbajaj.newsapp.ui.topheadlines.TopHeadlineActivity
 
 class MainActivity : AppCompatActivity() {
@@ -40,6 +41,10 @@ class MainActivity : AppCompatActivity() {
         startActivity(
             Intent(this, LanguagesActivity::class.java)
         )
+    }
+    
+    fun onSearchClick(view: View) {
+        startActivity(Intent(this, SearchActivity::class.java))
     }
 
     companion object {

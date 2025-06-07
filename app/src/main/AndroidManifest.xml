@@ -43,6 +43,11 @@
         <activity
             android:name=".ui.languages.LanguagesActivity"
             android:exported="false" />
+            
+        <activity
+            android:name=".ui.search.SearchActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
 
     </application>
 

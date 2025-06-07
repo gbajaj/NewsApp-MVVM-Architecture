@@ -48,6 +48,6 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_arrow_forward"
             android:contentDescription="@string/action_next"
-            android:tint="?attr/colorControlNormal" />
+            app:tint="?attr/colorControlNormal" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>
