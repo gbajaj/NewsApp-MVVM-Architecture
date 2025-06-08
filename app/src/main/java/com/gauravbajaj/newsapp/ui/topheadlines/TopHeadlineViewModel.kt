@@ -9,6 +9,7 @@ import com.gauravbajaj.newsapp.utils.AppConstant.COUNTRY
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,7 +26,8 @@ class TopHeadlineViewModel @Inject constructor(
     fun loadTopHeadlines(country: String = COUNTRY) {
         viewModelScope.launch {
             _uiState.value = UiState.Loading
-            repository.getTopHeadlines(country).catch {
+            repository.getTopHeadlines(country)
+                .onStart { _uiState.value = UiState.Loading }.catch {
                 _uiState.value = UiState.Error(it.message)
             }.collect { articles ->
                 _uiState.value = UiState.Success(articles)
