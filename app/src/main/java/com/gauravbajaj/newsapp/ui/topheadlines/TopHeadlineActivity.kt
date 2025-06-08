@@ -25,6 +25,7 @@ class TopHeadlineActivity : AppCompatActivity() {
     private lateinit var adapter: TopHeadlinesAdapter
 
     private lateinit var binding: ActivityTopHeadlinesBinding
+    private var errorMessage: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies()
@@ -36,6 +37,10 @@ class TopHeadlineActivity : AppCompatActivity() {
         setupUI()
         setupObserver()
         loadHeadlines()
+
+        binding.retryButton.setOnClickListener {
+            loadHeadlines()
+        }
     }
 
     private fun setupToolbar() {
@@ -62,28 +67,34 @@ class TopHeadlineActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { result ->
                     when (result) {
-                        is UiState.Loading -> showLoading(true)
+                        is UiState.Loading -> {
+                            hideError()
+                            showLoading(true)
+                        }
+
                         is UiState.Success -> {
                             showLoading(false)
+                            hideError()
                             result.data.let { articles ->
                                 if (articles.isNotEmpty()) {
                                     adapter.submitList(articles)
                                 } else {
-                                    showMessage(getString(R.string.no_articles_found))
+                                    showError(getString(R.string.no_articles_found))
                                 }
                             }
                         }
 
                         is UiState.Error -> {
                             showLoading(false)
-                            showMessage(result.message ?: getString(R.string.error_loading_news))
+                            val errorMsg = result.message ?: getString(R.string.error_loading_news)
+                            showError(errorMsg)
+                            showMessage(errorMsg)
                         }
                     }
                 }
             }
         }
     }
-
     private fun loadHeadlines() {
         viewModel.loadTopHeadlines()
     }
@@ -92,9 +103,26 @@ class TopHeadlineActivity : AppCompatActivity() {
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
+    private fun showError(message: String) {
+        errorMessage = message
+        binding.errorView.visibility = View.VISIBLE
+        binding.errorMessage.text = message
+        binding.recyclerView.visibility = View.GONE
+    }
+
+    private fun hideError() {
+        binding.errorView.visibility = View.GONE
+        binding.recyclerView.visibility = View.VISIBLE
+    }
+
     private fun showMessage(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
+
+    private fun showMessage(messageResId: Int) {
+        Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show()
+    }
+
     private fun injectDependencies() {
         DaggerActivityComponent.builder()
             .applicationComponent((application as NewsApplication).applicationComponent)
