@@ -24,6 +24,7 @@ class TopHeadlineViewModel @Inject constructor(
 
     fun loadTopHeadlines(country: String = COUNTRY) {
         viewModelScope.launch {
+            _uiState.value = UiState.Loading
             repository.getTopHeadlines(country).catch {
                 _uiState.value = UiState.Error(it.message)
             }.collect { articles ->
