@@ -9,6 +9,8 @@ import com.gauravbajaj.newsapp.databinding.ActivityCountrySourcesBinding
 import com.gauravbajaj.newsapp.di.component.DaggerActivityComponent
 import com.gauravbajaj.newsapp.di.module.ActivityModule
 import com.gauravbajaj.newsapp.ui.base.UiState
+import com.gauravbajaj.newsapp.ui.newslist.NewsListActivity
+import com.gauravbajaj.newsapp.utils.CustomTabsHelper
 import javax.inject.Inject
 /**
  * Activity to show the list of countries
@@ -51,8 +53,11 @@ class CountrySourcesActivity : AppCompatActivity() {
         }
 
         adapter.onItemClick = { country ->
-            // Handle item click - for example, open news from that country
-            //TODO
+            // Open NewsListActivity with the selected country
+            NewsListActivity.start(
+                this@CountrySourcesActivity,
+                country = country.code.toLowerCase()
+            )
         }
     }
 

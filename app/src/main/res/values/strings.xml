@@ -49,9 +49,17 @@
     <!-- Search Activity -->
     <string name="search_news">Search News</string>
     <string name="search_hint">Search for news…</string>
-    <string name="no_results_found">No results found</string>
+    
+    <!-- News List Activity -->
+    <string name="filter_news">Filter News</string>
+    <string name="source">Source</string>
+    <string name="country">Country</string>
+    <string name="language">Language</string>
+    <string name="apply">Apply</string>
+    <string name="apply_filters">Apply filters</string>
+    <string name="no_results_found">No news found matching your criteria</string>
+    <string name="empty_state_message">No news to display</string>
     <string name="error_search_failed">Failed to perform search. Please try again.</string>
-    <string name="empty_state_message">No content available</string>
     <string name="error_generic">An error occurred</string>
         <!-- Add other strings as needed -->
 </resources>

@@ -12,6 +12,8 @@ import com.gauravbajaj.newsapp.di.component.DaggerActivityComponent
 import com.gauravbajaj.newsapp.di.module.ActivityModule
 import com.gauravbajaj.newsapp.ui.languages.LanguageAdapter
 import com.gauravbajaj.newsapp.ui.languages.LanguagesViewModel
+import com.gauravbajaj.newsapp.ui.news_sources.NewsSourcesActivity
+import com.gauravbajaj.newsapp.ui.newslist.NewsListActivity
 import javax.inject.Inject
 
 class LanguagesActivity : AppCompatActivity() {
@@ -26,7 +28,6 @@ class LanguagesActivity : AppCompatActivity() {
         injectDependencies()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_languages)
-        
 
         setupToolbar()
         setupRecyclerView()
@@ -44,8 +45,10 @@ class LanguagesActivity : AppCompatActivity() {
     private fun setupRecyclerView() {
         adapter = LanguageAdapter()
         adapter.onItemClick = { language ->
-            // Handle language selection
-            // Todo launch activity to show news in that launguage
+            NewsListActivity.start(
+                this@LanguagesActivity,
+                language = language.code,
+            )
         }
 
         val rvLanguages: RecyclerView = findViewById(R.id.rvLanguages)

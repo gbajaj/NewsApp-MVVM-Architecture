@@ -5,12 +5,16 @@ import com.gauravbajaj.newsapp.di.module.ActivityModule
 import com.gauravbajaj.newsapp.ui.country_sources.CountrySourcesActivity
 import com.gauravbajaj.newsapp.ui.languages.LanguagesActivity
 import com.gauravbajaj.newsapp.ui.news_sources.NewsSourcesActivity
+import com.gauravbajaj.newsapp.ui.newslist.NewsListActivity
 import com.gauravbajaj.newsapp.ui.search.SearchActivity
 import com.gauravbajaj.newsapp.ui.topheadlines.TopHeadlineActivity
 import dagger.Component
 
 @ActivityScope
-@Component(dependencies = [ApplicationComponent::class], modules = [ActivityModule::class])
+@Component(
+    dependencies = [ApplicationComponent::class],
+    modules = [ActivityModule::class]
+)
 interface ActivityComponent {
 
     fun inject(activity: TopHeadlineActivity)
@@ -22,4 +26,6 @@ interface ActivityComponent {
     fun inject(activity: LanguagesActivity)
     
     fun inject(activity: SearchActivity)
+    
+    fun inject(activity: NewsListActivity)
 }

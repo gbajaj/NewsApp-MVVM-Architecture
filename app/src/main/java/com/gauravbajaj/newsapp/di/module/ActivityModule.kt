@@ -16,10 +16,12 @@ import com.gauravbajaj.newsapp.ui.languages.LanguagesViewModel
 import com.gauravbajaj.newsapp.ui.news_sources.NewsSourcesAdapter
 import com.gauravbajaj.newsapp.ui.news_sources.NewsSourcesViewModel
 import com.gauravbajaj.newsapp.ui.search.SearchResultsAdapter
-
 import com.gauravbajaj.newsapp.ui.search.SearchViewModel
 import com.gauravbajaj.newsapp.ui.topheadlines.TopHeadlineViewModel
 import com.gauravbajaj.newsapp.ui.topheadlines.TopHeadlinesAdapter
+import com.gauravbajaj.newsapp.ui.newslist.NewsListAdapter
+import com.gauravbajaj.newsapp.ui.newslist.NewsListViewModel
+import com.gauravbajaj.newsapp.data.repository.NewsRepository
 import dagger.Module
 import dagger.Provides
 
@@ -31,7 +33,6 @@ class ActivityModule(private val activity: AppCompatActivity) {
     fun provideContext(): Context {
         return activity
     }
-
     /**
      * Provides the [TopHeadlineViewModel] to the [TopHeadlineActivity].
      *
@@ -40,12 +41,13 @@ class ActivityModule(private val activity: AppCompatActivity) {
      * @return the [TopHeadlineViewModel].
      */
     @Provides
-    fun provideNewsListViewModel(topHeadlineRepository: TopHeadlineRepository): TopHeadlineViewModel {
+    fun provideTopHeadlineViewModel(topHeadlineRepository: TopHeadlineRepository): TopHeadlineViewModel {
         return ViewModelProvider(activity,
             ViewModelProviderFactory(TopHeadlineViewModel::class) {
                 TopHeadlineViewModel(topHeadlineRepository)
             })[TopHeadlineViewModel::class.java]
     }
+
 
     @Provides
     fun provideNewsSourcesViewModel(newsSourcesRepository: NewsSourcesRepository): NewsSourcesViewModel {
@@ -94,6 +96,25 @@ class ActivityModule(private val activity: AppCompatActivity) {
     
     @Provides
     fun provideSearchResultsAdapter(): SearchResultsAdapter = SearchResultsAdapter()
+
+    /**
+     * Provides the [TopHeadlineViewModel] to the [TopHeadlineActivity].
+     *
+     * @param topHeadlineRepository the [TopHeadlineRepository] to use for the view model.
+     *
+     * @return the [TopHeadlineViewModel].
+     */
+    @Provides
+    fun provideNewsListViewModel(repository: NewsRepository): NewsListViewModel {
+        return ViewModelProvider(activity,
+            ViewModelProviderFactory(NewsListViewModel::class) {
+                NewsListViewModel(repository)
+            })[NewsListViewModel::class.java]
+    }
+
+    
+    @Provides
+    fun provideNewsListAdapter(): NewsListAdapter = NewsListAdapter()
 
 
 }

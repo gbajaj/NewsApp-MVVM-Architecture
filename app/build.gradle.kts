@@ -76,6 +76,9 @@ dependencies {
     // Browser (for Custom Tabs)
     implementation(libs.androidx.browser)
     
+    // SwipeRefreshLayout
+    implementation(libs.androidx.swiperefreshlayout)
+    
     // For Kotlin annotation processing
     kapt(libs.kotlinx.metadata.jvm)
 }

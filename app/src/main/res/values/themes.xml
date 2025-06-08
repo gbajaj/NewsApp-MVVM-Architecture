@@ -16,6 +16,9 @@
         
         <!-- Customize your theme here. -->
         <item name="toolbarStyle">@style/Widget.NewsAppMVVMArchitecture.Toolbar</item>
+        
+        <!-- AppBar overlay style -->
+        <item name="appBarLayoutStyle">@style/Widget.NewsAppMVVMArchitecture.AppBarLayout</item>
     </style>
 
     <style name="Theme.NewsAppMVVMArchitecture" parent="Base.Theme.NewsAppMVVMArchitecture" />
@@ -34,4 +37,13 @@
 <!--        <item name="searchIconTint">?attr/colorPrimary</item>-->
         <item name="closeIconTint">?attr/colorPrimary</item>
     </style>
+    
+    <style name="Widget.NewsAppMVVMArchitecture.AppBarLayout" parent="Widget.Material3.AppBarLayout">
+        <item name="elevation">0dp</item>
+        <item name="android:background">?attr/colorPrimary</item>
+    </style>
+    
+    <style name="Theme.NewsAppMVVMArchitecture.AppBarOverlay" parent="ThemeOverlay.Material3.Dark.ActionBar" />
+    
+    <style name="Theme.NewsAppMVVMArchitecture.PopupOverlay" parent="ThemeOverlay.Material3.Dark" />
 </resources>

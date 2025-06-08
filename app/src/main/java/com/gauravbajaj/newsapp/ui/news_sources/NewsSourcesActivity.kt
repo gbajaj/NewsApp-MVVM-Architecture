@@ -9,7 +9,10 @@ import com.gauravbajaj.newsapp.databinding.ActivityNewsSourcesBinding
 import com.gauravbajaj.newsapp.di.component.DaggerActivityComponent
 import com.gauravbajaj.newsapp.di.module.ActivityModule
 import com.gauravbajaj.newsapp.ui.base.UiState
+import com.gauravbajaj.newsapp.ui.country_sources.CountrySourcesActivity
+import com.gauravbajaj.newsapp.ui.newslist.NewsListActivity
 import javax.inject.Inject
+import kotlin.text.toLowerCase
 
 class NewsSourcesActivity : AppCompatActivity() {
     @Inject
@@ -54,8 +57,10 @@ class NewsSourcesActivity : AppCompatActivity() {
         }
 
         adapter.onItemClick = { source ->
-            // Handle item click - for example, open TopHeadlineActivity with this source
-            //TODO
+            NewsListActivity.start(
+                this@NewsSourcesActivity,
+                source = source.id,
+            )
         }
     }
 
