@@ -61,5 +61,10 @@
     <string name="empty_state_message">No news to display</string>
     <string name="error_search_failed">Failed to perform search. Please try again.</string>
     <string name="error_generic">An error occurred</string>
-        <!-- Add other strings as needed -->
+    
+    <!-- Language Selection -->
+    <string name="select_up_to_two_languages">Select up to 2 languages</string>
+    <string name="selected_languages">Selected: %1$s</string>
+    <string name="max_languages_selected">You can select up to 2 languages</string>
+    <string name="action_done">Done</string>
 </resources>

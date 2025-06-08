@@ -13,8 +13,9 @@ import com.gauravbajaj.newsapp.data.model.Language
 
 class LanguageAdapter : ListAdapter<Language, LanguageAdapter.LanguageViewHolder>(LanguageDiffCallback()) {
 
-    var onItemClick: ((Language) -> Unit)? = null
-    private var selectedLanguageCode: String = "en" // Default to English
+    private val selectedLanguages = mutableSetOf<String>()
+    var onSelectionChanged: ((List<String>) -> Unit)? = null
+    var onMaxSelectionReached: (() -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LanguageViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -26,8 +27,9 @@ class LanguageAdapter : ListAdapter<Language, LanguageAdapter.LanguageViewHolder
         holder.bind(getItem(position))
     }
 
-    fun setSelectedLanguage(code: String) {
-        selectedLanguageCode = code
+    fun setSelectedLanguages(codes: List<String>) {
+        selectedLanguages.clear()
+        selectedLanguages.addAll(codes.take(2))
         notifyDataSetChanged()
     }
 
@@ -40,7 +42,18 @@ class LanguageAdapter : ListAdapter<Language, LanguageAdapter.LanguageViewHolder
         init {
             itemView.setOnClickListener {
                 if (adapterPosition != RecyclerView.NO_POSITION) {
-                    onItemClick?.invoke(getItem(adapterPosition))
+                    val language = getItem(adapterPosition)
+                    if (selectedLanguages.contains(language.code)) {
+                        selectedLanguages.remove(language.code)
+                    } else {
+                        if (selectedLanguages.size < 2) {
+                            selectedLanguages.add(language.code)
+                        } else {
+                            onMaxSelectionReached?.invoke()
+                        }
+                    }
+                    notifyItemChanged(adapterPosition)
+                    onSelectionChanged?.invoke(selectedLanguages.toList())
                 }
             }
         }
@@ -49,7 +62,7 @@ class LanguageAdapter : ListAdapter<Language, LanguageAdapter.LanguageViewHolder
             tvLanguageName.text = language.name
             tvLanguageNativeName.text = language.nativeName
             tvLanguageCode.text = language.code
-            ivSelected.visibility = if (language.code == selectedLanguageCode) View.VISIBLE else View.GONE
+            ivSelected.visibility = if (selectedLanguages.contains(language.code)) View.VISIBLE else View.GONE
         }
     }
 }
