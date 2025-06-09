@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     id("kotlin-kapt")
     id("kotlin-parcelize")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -69,9 +70,15 @@ dependencies {
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     
-    // Dagger 2
-    implementation(libs.dagger)
-    kapt(libs.dagger.compiler)
+    // Hilt
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
+    
+    // For Kotlin annotation processing
+    kapt(libs.kotlinx.metadata.jvm)
+    
+    // For Hilt support for ViewModel
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
     
     // Browser (for Custom Tabs)
     implementation(libs.androidx.browser)

@@ -14,6 +14,7 @@ import com.gauravbajaj.newsapp.di.module.ActivityModule
 import com.gauravbajaj.newsapp.ui.newslist.NewsListActivity
 import javax.inject.Inject
 
+
 class LanguagesActivity : AppCompatActivity() {
     private var doneMenuItem: MenuItem? = null
     private var selectedLanguages = emptyList<String>()

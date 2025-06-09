@@ -24,8 +24,10 @@ import com.gauravbajaj.newsapp.ui.newslist.NewsListViewModel
 import com.gauravbajaj.newsapp.data.repository.NewsRepository
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.migration.DisableInstallInCheck
 
 @Module
+@DisableInstallInCheck
 class ActivityModule(private val activity: AppCompatActivity) {
 
     @ActivityContext
