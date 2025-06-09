@@ -8,6 +8,8 @@ import com.gauravbajaj.newsapp.data.model.Source
 import com.gauravbajaj.newsapp.data.repository.NewsSourcesRepository
 import com.gauravbajaj.newsapp.ui.base.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
@@ -18,8 +20,8 @@ class NewsSourcesViewModel @Inject constructor(
     private val repository: NewsSourcesRepository
 ) : ViewModel() {
 
-    private val _newsSources = MutableLiveData<UiState<List<Source>>>()
-    val newsSources: LiveData<UiState<List<Source>>> = _newsSources
+    private val _newsSources = MutableStateFlow<UiState<List<Source>>>( UiState.Loading  )
+    val newsSources: StateFlow<UiState<List<Source>>> = _newsSources
 
     fun loadNewsSources() {
         viewModelScope.launch {
