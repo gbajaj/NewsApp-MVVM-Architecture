@@ -2,52 +2,120 @@ package com.gauravbajaj.newsapp
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import com.gauravbajaj.newsapp.ui.country_sources.CountrySourcesActivity
 import com.gauravbajaj.newsapp.ui.languages.LanguagesActivity
 import com.gauravbajaj.newsapp.ui.news_sources.NewsSourcesActivity
 import com.gauravbajaj.newsapp.ui.search.SearchActivity
+import com.gauravbajaj.newsapp.ui.theme.NewsAppTheme
 import com.gauravbajaj.newsapp.ui.topheadlines.TopHeadlineActivity
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        setContent {
+            NewsAppTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    MainScreen()
+                }
+            }
         }
     }
-    
-    fun onTopHeadlinesClick(view: View) {
-        startActivity(Intent(this, TopHeadlineActivity::class.java))
-    }
+}
 
-    fun onNewsSourcesClick(view: View) {
-        startActivity(Intent(this, NewsSourcesActivity::class.java))
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MainScreen() {
+    val context = LocalContext.current
+
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(
+                        context.resources.getString(R.string.app_name),
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
+            )
+        }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceEvenly
+        ) {
+            // Rounded button with 15% margin on both sides
+            MainScreenButton(text = LocalContext.current.resources.getString(R.string.top_headlines)) {
+                context.startActivity(Intent(context, TopHeadlineActivity::class.java))
+            }
+            MainScreenButton(text = LocalContext.current.resources.getString(R.string.news_sources)) {
+                context.startActivity(Intent(context, NewsSourcesActivity::class.java))
+            }
+
+            MainScreenButton(text = LocalContext.current.resources.getString(R.string.countries)) {
+                context.startActivity(Intent(context, CountrySourcesActivity::class.java))
+            }
+
+            MainScreenButton(text = LocalContext.current.resources.getString(R.string.languages)) {
+                context.startActivity(Intent(context, LanguagesActivity::class.java))
+            }
+
+            MainScreenButton(text = LocalContext.current.resources.getString(R.string.search)) {
+                context.startActivity(Intent(context, SearchActivity::class.java))
+            }
+        }
     }
-    
-    fun onCountriesClick(view: View) {
-        startActivity(Intent(this, CountrySourcesActivity::class.java))
-    }
-    
-    fun onLanguagesClick(view: View) {
-        startActivity(
-            Intent(this, LanguagesActivity::class.java)
+}
+
+@Composable
+fun MainScreenButton(text:String, onClick: () -> Unit =  {}){
+    Button(
+        onClick = onClick,
+        modifier = Modifier
+            .fillMaxWidth(0.85f)  // 85% width (15% margin on each side)
+            .height(56.dp * 1.2f)  // 20% taller than default Material button height
+            .padding(vertical = 8.dp),
+        shape = MaterialTheme.shapes.medium,  // Rounded corners
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary
         )
-    }
-    
-    fun onSearchClick(view: View) {
-        startActivity(Intent(this, SearchActivity::class.java))
-    }
+    ) {
 
-    companion object {
-        private const val REQUEST_CODE_LANGUAGE_SELECTION = 1001
+        Text(text = text)
+
     }
 }

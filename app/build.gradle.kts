@@ -9,10 +9,15 @@ plugins {
 android {
     buildFeatures {
         viewBinding = true
+        compose = true
     }
     
     namespace = "com.gauravbajaj.newsapp"
     compileSdk = 35
+    
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
+    }
 
     defaultConfig {
         applicationId = "com.gauravbajaj.newsapp"
@@ -77,9 +82,19 @@ dependencies {
     // For Kotlin annotation processing
     kapt(libs.kotlinx.metadata.jvm)
     
-    // For Hilt support for ViewModel
-    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+    // Compose
+    implementation(platform(libs.compose.bom))
+    implementation(libs.compose.ui)
+    implementation(libs.compose.ui.graphics)
+    implementation(libs.compose.ui.tooling.preview)
+    implementation(libs.compose.material3)
+    implementation(libs.activity.compose)
+    implementation(libs.lifecycle.viewmodel.compose)
+    implementation(libs.navigation.compose)
+    implementation(libs.hilt.navigation.compose)
+    implementation(libs.coil.compose)
     
+
     // Browser (for Custom Tabs)
     implementation(libs.androidx.browser)
     
