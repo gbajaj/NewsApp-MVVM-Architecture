@@ -3,24 +3,23 @@ package com.gauravbajaj.newsapp.ui.topheadlines
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.gauravbajaj.newsapp.NewsApplication
 import com.gauravbajaj.newsapp.R
 import com.gauravbajaj.newsapp.databinding.ActivityTopHeadlinesBinding
-import com.gauravbajaj.newsapp.di.component.DaggerActivityComponent
-import com.gauravbajaj.newsapp.di.module.ActivityModule
 import com.gauravbajaj.newsapp.ui.base.UiState
 import com.gauravbajaj.newsapp.utils.CustomTabsHelper
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import kotlin.getValue
 
+@AndroidEntryPoint
 class TopHeadlineActivity : AppCompatActivity() {
-    @Inject
-    lateinit var viewModel: TopHeadlineViewModel
+    private val viewModel by viewModels<TopHeadlineViewModel>()
 
     private lateinit var adapter: TopHeadlinesAdapter
 
@@ -28,7 +27,6 @@ class TopHeadlineActivity : AppCompatActivity() {
     private var errorMessage: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies()
         super.onCreate(savedInstanceState)
         binding = ActivityTopHeadlinesBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -121,11 +119,5 @@ class TopHeadlineActivity : AppCompatActivity() {
 
     private fun showMessage(messageResId: Int) {
         Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show()
-    }
-
-    private fun injectDependencies() {
-        DaggerActivityComponent.builder()
-            .applicationComponent((application as NewsApplication).applicationComponent)
-            .activityModule(ActivityModule(this)).build().inject(this)
     }
 }

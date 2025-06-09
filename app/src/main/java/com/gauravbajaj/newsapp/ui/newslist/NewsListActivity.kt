@@ -2,31 +2,29 @@ package com.gauravbajaj.newsapp.ui.newslist
 
 import android.os.Bundle
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.gauravbajaj.newsapp.NewsApplication
 import com.gauravbajaj.newsapp.R
 import com.gauravbajaj.newsapp.databinding.ActivityNewsListBinding
-import com.gauravbajaj.newsapp.di.component.DaggerActivityComponent
-import com.gauravbajaj.newsapp.di.module.ActivityModule
 import com.gauravbajaj.newsapp.ui.base.UiState
 import com.gauravbajaj.newsapp.utils.CustomTabsHelper
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import kotlin.getValue
 
+@AndroidEntryPoint
 class NewsListActivity : AppCompatActivity() {
 
-    @Inject
-    lateinit var viewModel: NewsListViewModel
-    
-    @Inject
+    private val viewModel by viewModels<NewsListViewModel>()
+
     lateinit var adapter: NewsListAdapter
-    
+
     private lateinit var binding: ActivityNewsListBinding
 
     companion object {
@@ -54,18 +52,17 @@ class NewsListActivity : AppCompatActivity() {
     private var selectedLanguage: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies()
         super.onCreate(savedInstanceState)
         binding = ActivityNewsListBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        
+
         // Initialize from intent extras
         selectedSource = intent.getStringExtra(EXTRA_SOURCE)
         selectedCountry = intent.getStringExtra(EXTRA_COUNTRY)
         selectedLanguage = intent.getStringExtra(EXTRA_LANGUAGE)
 
-
         // Setup adapter click listener
+        adapter = NewsListAdapter()
         adapter.onArticleClick = { article ->
             article.url.let { url ->
                 CustomTabsHelper.launchUrl(this, url)
@@ -88,6 +85,7 @@ class NewsListActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
+        adapter = NewsListAdapter()
         binding.rvNewsList.apply {
             layoutManager = LinearLayoutManager(this@NewsListActivity)
             addItemDecoration(
@@ -107,7 +105,6 @@ class NewsListActivity : AppCompatActivity() {
     }
 
 
-
     private fun observeViewModel() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -118,6 +115,7 @@ class NewsListActivity : AppCompatActivity() {
                                 showLoading(true)
                             }
                         }
+
                         is UiState.Success -> {
                             showLoading(false)
                             if (state.data.isEmpty()) {
@@ -128,6 +126,7 @@ class NewsListActivity : AppCompatActivity() {
                                 adapter.submitList(state.data)
                             }
                         }
+
                         is UiState.Error -> {
                             showLoading(false)
                             showError(state.message ?: getString(R.string.error_generic))
@@ -153,11 +152,13 @@ class NewsListActivity : AppCompatActivity() {
     private fun showEmptyState(isEmpty: Boolean) {
         binding.emptyView.root.visibility = if (isEmpty) View.VISIBLE else View.GONE
         binding.rvNewsList.visibility = if (isEmpty) View.GONE else View.VISIBLE
-        
+
         if (isEmpty) {
-            val emptyImageView = binding.emptyView.root.findViewById<androidx.appcompat.widget.AppCompatImageView>(R.id.ivEmptyState)
-            val emptyTextView = binding.emptyView.root.findViewById<androidx.appcompat.widget.AppCompatTextView>(R.id.tvEmptyMessage)
-            
+            val emptyImageView =
+                binding.emptyView.root.findViewById<androidx.appcompat.widget.AppCompatImageView>(R.id.ivEmptyState)
+            val emptyTextView =
+                binding.emptyView.root.findViewById<androidx.appcompat.widget.AppCompatTextView>(R.id.tvEmptyMessage)
+
             emptyImageView.setImageResource(R.drawable.ic_search)
             emptyTextView.setText(R.string.no_results_found)
         }
@@ -172,10 +173,5 @@ class NewsListActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true
-    }
-    private fun injectDependencies() {
-        DaggerActivityComponent.builder()
-            .applicationComponent((application as NewsApplication).applicationComponent)
-            .activityModule(ActivityModule(this)).build().inject(this)
     }
 }

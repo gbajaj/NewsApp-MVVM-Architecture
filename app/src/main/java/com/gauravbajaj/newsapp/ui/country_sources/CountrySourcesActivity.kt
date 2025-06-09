@@ -2,32 +2,26 @@ package com.gauravbajaj.newsapp.ui.country_sources
 
 import android.os.Bundle
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.gauravbajaj.newsapp.NewsApplication
 import com.gauravbajaj.newsapp.databinding.ActivityCountrySourcesBinding
-import com.gauravbajaj.newsapp.di.component.DaggerActivityComponent
-import com.gauravbajaj.newsapp.di.module.ActivityModule
 import com.gauravbajaj.newsapp.ui.base.UiState
 import com.gauravbajaj.newsapp.ui.newslist.NewsListActivity
-import com.gauravbajaj.newsapp.utils.CustomTabsHelper
-import javax.inject.Inject
+
 /**
  * Activity to show the list of countries
  *
  * @author Gaurav Bajaj
  */
 class CountrySourcesActivity : AppCompatActivity() {
-    @Inject
-    lateinit var viewModel: CountrySourcesViewModel
+    private val viewModel by viewModels<CountrySourcesViewModel>()
 
-    @Inject
     lateinit var adapter: CountryAdapter
 
     private lateinit var binding: ActivityCountrySourcesBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies()
         super.onCreate(savedInstanceState)
         binding = ActivityCountrySourcesBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -71,10 +65,12 @@ class CountrySourcesActivity : AppCompatActivity() {
                         adapter.submitList(countries)
                     }
                 }
+
                 is UiState.Error -> {
                     showLoading(false)
                     // Handle error
                 }
+
                 else -> {}
             }
         }
@@ -82,14 +78,6 @@ class CountrySourcesActivity : AppCompatActivity() {
 
     private fun showLoading(isLoading: Boolean) {
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
-    }
-
-    private fun injectDependencies() {
-        DaggerActivityComponent.builder()
-            .applicationComponent((application as NewsApplication).applicationComponent)
-            .activityModule(ActivityModule(this))
-            .build()
-            .inject(this)
     }
 
     companion object {

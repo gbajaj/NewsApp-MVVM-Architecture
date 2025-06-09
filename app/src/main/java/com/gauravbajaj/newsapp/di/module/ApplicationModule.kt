@@ -1,17 +1,18 @@
 package com.gauravbajaj.newsapp.di.module
 
-import android.content.Context
-
-import com.gauravbajaj.newsapp.NewsApplication
 import com.gauravbajaj.newsapp.data.api.NetworkService
-import com.gauravbajaj.newsapp.di.ApplicationContext
+import com.gauravbajaj.newsapp.data.repository.NewsRepository
+import com.gauravbajaj.newsapp.data.repository.NewsSourcesRepository
+import com.gauravbajaj.newsapp.data.repository.SearchRepository
+import com.gauravbajaj.newsapp.data.repository.TopHeadlineRepository
 import com.gauravbajaj.newsapp.di.BaseUrl
 import com.gauravbajaj.newsapp.utils.AppConstant.API_KEY
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
-import dagger.hilt.migration.DisableInstallInCheck
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -20,20 +21,13 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
-@DisableInstallInCheck
-class ApplicationModule(
-    private val application: NewsApplication
-) {
-    @ApplicationContext
-    @Provides
-    fun provideContext(): Context {
-        return application
-    }
+@InstallIn(SingletonComponent::class)
+class ApplicationModule() {
 
     @BaseUrl
     @Provides
     fun provideBaseUrl(): String = "https://newsapi.org/v2/"
-    
+
     @Provides
     @Singleton
     fun provideGson(): Gson = GsonBuilder().create()
@@ -71,6 +65,12 @@ class ApplicationModule(
             .writeTimeout(30, TimeUnit.SECONDS)
             .build()
     }
+    @Provides
+    @Singleton
+    fun provideNetworkService(@BaseUrl baseUrl: String, retrofit: Retrofit): NetworkService {
+        return retrofit
+            .create(NetworkService::class.java)
+    }
 
     @Provides
     @Singleton
@@ -86,9 +86,23 @@ class ApplicationModule(
             .build()
     }
 
+
     @Provides
     @Singleton
-    fun provideNetworkService(retrofit: Retrofit): NetworkService {
-        return retrofit.create(NetworkService::class.java)
-    }
+    fun provideNewsRepository(networkService: NetworkService) = NewsRepository(networkService)
+
+    @Provides
+    @Singleton
+    fun provideNewsSourcesRepository(networkService: NetworkService) =
+        NewsSourcesRepository(networkService)
+
+    @Provides
+    @Singleton
+    fun provideSearchRepository(networkService: NetworkService) = SearchRepository(networkService)
+
+    @Provides
+    @Singleton
+    fun provideTopHeadlineRepository(networkService: NetworkService) =
+        TopHeadlineRepository(networkService)
+
 }

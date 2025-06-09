@@ -2,31 +2,26 @@ package com.gauravbajaj.newsapp.ui.news_sources
 
 import android.os.Bundle
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.gauravbajaj.newsapp.NewsApplication
 import com.gauravbajaj.newsapp.R
 import com.gauravbajaj.newsapp.databinding.ActivityNewsSourcesBinding
-import com.gauravbajaj.newsapp.di.component.DaggerActivityComponent
-import com.gauravbajaj.newsapp.di.module.ActivityModule
 import com.gauravbajaj.newsapp.ui.base.UiState
-import com.gauravbajaj.newsapp.ui.country_sources.CountrySourcesActivity
 import com.gauravbajaj.newsapp.ui.newslist.NewsListActivity
-import javax.inject.Inject
-import kotlin.text.toLowerCase
+import dagger.hilt.android.AndroidEntryPoint
+import kotlin.getValue
 
+@AndroidEntryPoint
 class NewsSourcesActivity : AppCompatActivity() {
-    @Inject
-    lateinit var viewModel: NewsSourcesViewModel
 
-    @Inject
+    private val viewModel by viewModels<NewsSourcesViewModel>()
     lateinit var adapter: NewsSourcesAdapter
 
     private lateinit var binding: ActivityNewsSourcesBinding
     private var errorMessage: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies()
         super.onCreate(savedInstanceState)
         binding = ActivityNewsSourcesBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -35,7 +30,7 @@ class NewsSourcesActivity : AppCompatActivity() {
         setupRecyclerView()
         observeViewModel()
         loadNewsSources()
-        
+
         binding.retryButton.setOnClickListener {
             loadNewsSources()
         }
@@ -51,7 +46,6 @@ class NewsSourcesActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         binding.toolbar.setNavigationOnClickListener { onBackPressed() }
     }
-
 
 
     private fun setupRecyclerView() {
@@ -77,6 +71,7 @@ class NewsSourcesActivity : AppCompatActivity() {
                     hideError()
                     showLoading(true)
                 }
+
                 is UiState.Success -> {
                     showLoading(false)
                     hideError()
@@ -88,12 +83,14 @@ class NewsSourcesActivity : AppCompatActivity() {
                         }
                     }
                 }
+
                 is UiState.Error -> {
                     showLoading(false)
                     val errorMsg = state.message ?: getString(R.string.error_loading_sources)
                     showError(errorMsg)
                     showMessage(errorMsg)
                 }
+
                 else -> {}
             }
         }
@@ -118,14 +115,8 @@ class NewsSourcesActivity : AppCompatActivity() {
         binding.errorView.visibility = View.GONE
         binding.rvNewsSources.visibility = View.VISIBLE
     }
-    
+
     private fun showMessage(message: String) {
         android.widget.Toast.makeText(this, message, android.widget.Toast.LENGTH_SHORT).show()
-    }
-
-    private fun injectDependencies() {
-        DaggerActivityComponent.builder()
-            .applicationComponent((application as NewsApplication).applicationComponent)
-            .activityModule(ActivityModule(this)).build().inject(this)
     }
 }

@@ -1,19 +1,18 @@
 package com.gauravbajaj.newsapp.ui.languages
 
-import android.app.Application
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gauravbajaj.newsapp.NewsApplication
 import com.gauravbajaj.newsapp.R
 import com.gauravbajaj.newsapp.data.model.Language
-import com.gauravbajaj.newsapp.di.ActivityContext
-import com.gauravbajaj.newsapp.di.ApplicationContext
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class LanguagesViewModel @Inject constructor(
     @ApplicationContext private val context: Context
 ) : ViewModel() {

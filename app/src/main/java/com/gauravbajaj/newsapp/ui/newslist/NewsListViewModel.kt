@@ -5,11 +5,13 @@ import androidx.lifecycle.viewModelScope
 import com.gauravbajaj.newsapp.data.model.Article
 import com.gauravbajaj.newsapp.data.repository.NewsRepository
 import com.gauravbajaj.newsapp.ui.base.UiState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class NewsListViewModel @Inject constructor(
     private val repository: NewsRepository
 ) : ViewModel() {

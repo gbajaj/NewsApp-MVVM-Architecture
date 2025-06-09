@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.gauravbajaj.newsapp.data.model.Article
 import com.gauravbajaj.newsapp.data.repository.SearchRepository
 import com.gauravbajaj.newsapp.ui.base.UiSearchState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
@@ -19,6 +20,7 @@ import javax.inject.Inject
  *
  * @property searchRepository The repository used to perform the news search.
  */
+@HiltViewModel
 class SearchViewModel @Inject constructor(
     private val searchRepository: SearchRepository
 ) : ViewModel() {

@@ -1,32 +1,27 @@
 package com.gauravbajaj.newsapp.ui.languages
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.RecyclerView
-import com.gauravbajaj.newsapp.NewsApplication
 import com.gauravbajaj.newsapp.R
-import com.gauravbajaj.newsapp.di.component.DaggerActivityComponent
-import com.gauravbajaj.newsapp.di.module.ActivityModule
 import com.gauravbajaj.newsapp.ui.newslist.NewsListActivity
-import javax.inject.Inject
+import dagger.hilt.android.AndroidEntryPoint
+import kotlin.getValue
 
 
+@AndroidEntryPoint
 class LanguagesActivity : AppCompatActivity() {
     private var doneMenuItem: MenuItem? = null
     private var selectedLanguages = emptyList<String>()
+    private val viewModel by viewModels<LanguagesViewModel>()
 
-    @Inject
-    lateinit var viewModel: LanguagesViewModel
-
-    @Inject
     lateinit var adapter: LanguageAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_languages)
 
@@ -104,11 +99,5 @@ class LanguagesActivity : AppCompatActivity() {
         viewModel.languages.observe(this) { languages ->
             adapter.submitList(languages)
         }
-    }
-
-    private fun injectDependencies() {
-        DaggerActivityComponent.builder()
-            .applicationComponent((application as NewsApplication).applicationComponent)
-            .activityModule(ActivityModule(this)).build().inject(this)
     }
 }

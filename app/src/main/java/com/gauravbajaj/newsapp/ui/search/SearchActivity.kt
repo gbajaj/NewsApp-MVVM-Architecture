@@ -2,19 +2,16 @@ package com.gauravbajaj.newsapp.ui.search
 
 import android.os.Bundle
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.gauravbajaj.newsapp.NewsApplication
 import com.gauravbajaj.newsapp.R
 import com.gauravbajaj.newsapp.databinding.ActivitySearchBinding
-import com.gauravbajaj.newsapp.di.component.DaggerActivityComponent
-import com.gauravbajaj.newsapp.di.module.ActivityModule
 import com.gauravbajaj.newsapp.ui.base.UiSearchState
-import com.gauravbajaj.newsapp.ui.base.UiState
 import com.gauravbajaj.newsapp.utils.CustomTabsHelper
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 /**
  * The SearchActivity provides a search interface for finding news articles.
@@ -34,18 +31,17 @@ import javax.inject.Inject
  * @see SearchViewModel
  * @see SearchResultsAdapter
  */
+@AndroidEntryPoint
 class SearchActivity : AppCompatActivity() {
     
     /**
      * The ViewModel that manages the search functionality and business logic.
      */
-    @Inject
-    lateinit var viewModel: SearchViewModel
+    private val viewModel by viewModels<SearchViewModel>()
     
     /**
      * The adapter that manages the display of search results in the RecyclerView.
      */
-    @Inject
     lateinit var adapter: SearchResultsAdapter
     
     /**
@@ -61,7 +57,6 @@ class SearchActivity : AppCompatActivity() {
      *                           supplied in [onSaveInstanceState].
      */
     override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies()
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -86,6 +81,7 @@ class SearchActivity : AppCompatActivity() {
      * Configures the RecyclerView with a LinearLayoutManager and sets the adapter.
      */
     private fun setupRecyclerView() {
+        adapter = SearchResultsAdapter()
         binding.recyclerView.apply {
             layoutManager = LinearLayoutManager(this@SearchActivity)
             setHasFixedSize(true)
@@ -173,15 +169,5 @@ class SearchActivity : AppCompatActivity() {
     private fun showMessage(message: String) {
         android.widget.Toast.makeText(this, message, android.widget.Toast.LENGTH_SHORT).show()
     }
-    
-    /**
-     * This method initializes the Dagger component and injects the activity.
-     */
-    private fun injectDependencies() {
-        DaggerActivityComponent.builder()
-            .applicationComponent((application as NewsApplication).applicationComponent)
-            .activityModule(ActivityModule(this))
-            .build()
-            .inject(this)
-    }
+
 }

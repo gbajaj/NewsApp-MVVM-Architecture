@@ -7,11 +7,13 @@ import androidx.lifecycle.viewModelScope
 import com.gauravbajaj.newsapp.data.model.Source
 import com.gauravbajaj.newsapp.data.repository.NewsSourcesRepository
 import com.gauravbajaj.newsapp.ui.base.UiState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class NewsSourcesViewModel @Inject constructor(
     private val repository: NewsSourcesRepository
 ) : ViewModel() {
