@@ -101,7 +101,7 @@ fun MainScreen() {
 }
 
 @Composable
-fun MainScreenButton(text:String, onClick: () -> Unit =  {}){
+fun MainScreenButton(text: String, onClick: () -> Unit = {}) {
     Button(
         onClick = onClick,
         modifier = Modifier
