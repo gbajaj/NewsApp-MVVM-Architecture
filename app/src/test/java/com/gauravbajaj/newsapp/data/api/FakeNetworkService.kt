@@ -15,8 +15,8 @@ class FakeNetworkService @Inject constructor() : NetworkService {
 
     // Properties to control the behavior of the fake
     private var topHeadlinesResponse: TopHeadlinesResponse = TopHeadlinesResponse("ok", 0, emptyList())
-    private var sourcesResponse: SourcesResponse = SourcesResponse("ok", emptyList())
-    private var exception: Exception? = null
+    internal var sourcesResponse: SourcesResponse = SourcesResponse("ok", emptyList())
+    internal var exception: Exception? = null
 
     // Test data
     private val testArticle = Article(
@@ -37,6 +37,15 @@ class FakeNetworkService @Inject constructor() : NetworkService {
 
     fun setEmptyTopHeadlines() {
         this.topHeadlinesResponse = TopHeadlinesResponse("ok", 0, emptyList())
+    }
+
+    // Add to FakeNetworkService.kt
+    fun setSources(sources: List<Source>) {
+        this.sourcesResponse = SourcesResponse("ok", sources)
+    }
+
+    fun setSourcesResponse(response: SourcesResponse) {
+        this.sourcesResponse = response
     }
 
     fun setError(exception: Exception) {
