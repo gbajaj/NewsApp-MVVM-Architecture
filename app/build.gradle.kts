@@ -27,6 +27,7 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.gauravbajaj.newsapp.HiltTestRunner"
     }
 
     buildTypes {
@@ -54,35 +55,43 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.material3.android)
+    implementation(libs.androidx.junit.ktx)
+
+    // Core testing
     testImplementation(libs.junit)
+    testImplementation(libs.mockito.mockito.core)
+    testImplementation(libs.kotlin.mockito.kotlin)
+    testImplementation(libs.kotlinx.coroutines.test.v173)
+    testImplementation(libs.turbine)
+
+    // AndroidX Test
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.gson)
-    implementation(libs.glide)
-    
+
     // Retrofit
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
-    
+
     // OkHttp
     implementation(libs.okhttp)
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
-    
+
     // Lifecycle components
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
-    
+
     // Hilt
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
-    
+
     // For Kotlin annotation processing
     kapt(libs.kotlinx.metadata.jvm)
-    
+
     // Compose
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.ui)
@@ -94,14 +103,18 @@ dependencies {
     implementation(libs.navigation.compose)
     implementation(libs.hilt.navigation.compose)
     implementation(libs.coil.compose)
-    
+
 
     // Browser (for Custom Tabs)
     implementation(libs.androidx.browser)
-    
+
     // SwipeRefreshLayout
     implementation(libs.androidx.swiperefreshlayout)
-    
-    // For Kotlin annotation processing
-    kapt(libs.kotlinx.metadata.jvm)
+
+    // Hilt testing
+    androidTestImplementation(libs.hilt.android.testing)
+    kaptAndroidTest(libs.hilt.android.compiler)
+    testImplementation(libs.hilt.android.testing)
+    kaptTest(libs.hilt.android.compiler)
+    testImplementation(kotlin("test"))
 }
