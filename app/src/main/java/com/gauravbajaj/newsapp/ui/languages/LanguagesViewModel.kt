@@ -1,14 +1,15 @@
 package com.gauravbajaj.newsapp.ui.languages
 
 import android.content.Context
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gauravbajaj.newsapp.R
 import com.gauravbajaj.newsapp.data.model.Language
+import com.gauravbajaj.newsapp.ui.base.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -17,8 +18,8 @@ class LanguagesViewModel @Inject constructor(
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
-    private val _languages = MutableLiveData<List<Language>>()
-    val languages: LiveData<List<Language>> = _languages
+    private val _languages = MutableStateFlow<UiState<List<Language>>>(UiState.Loading)
+    val languages: StateFlow<UiState<List<Language>>> = _languages
 
     init {
         loadLanguages()
@@ -39,7 +40,7 @@ class LanguagesViewModel @Inject constructor(
                 Language("ru", context.getString(R.string.russian), "Русский", "🇷🇺"),
                 Language("pt", context.getString(R.string.portuguese), "Português", "🇵🇹")
             )
-            _languages.value = languagesList.sortedBy { it.name }
+            _languages.value = UiState.Success(languagesList.sortedBy { it.name })
         }
     }
 }

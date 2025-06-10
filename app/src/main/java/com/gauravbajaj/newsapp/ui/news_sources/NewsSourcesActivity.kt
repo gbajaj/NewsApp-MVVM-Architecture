@@ -6,17 +6,21 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.gauravbajaj.newsapp.R
 import com.gauravbajaj.newsapp.data.model.Source
@@ -137,6 +141,73 @@ private fun NewsSourcesList(
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+private fun NewsSourcesListPreview() {
+    val sampleSources = listOf(
+        Source(
+            id = "abc-news",
+            name = "ABC News",
+            description = "Your trusted source for breaking news, analysis, exclusive interviews, and videos at ABCNews.com.",
+            url = "https://abcnews.go.com",
+            category = "general",
+            language = "en",
+            country = "us"
+        ),
+        Source(
+            id = "bbc-news",
+            name = "BBC News",
+            description = "Use BBC News for up-to-the-minute news, breaking news, video, audio and feature stories.",
+            url = "https://www.bbc.co.uk/news",
+            category = "general",
+            language = "en",
+            country = "gb"
+        ),
+        Source(
+            id = "cnn",
+            name = "CNN",
+            description = "View the latest news and breaking news today for U.S., world, weather, entertainment, politics and health at CNN.com.",
+            url = "https://www.cnn.com",
+            category = "general",
+            language = "en",
+            country = "us"
+        )
+    )
+    
+    NewsAppTheme {
+        Surface {
+            NewsSourcesList(
+                sources = sampleSources,
+                onSourceClick = {},
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun NewsSourceItemPreview() {
+    val sampleSource = Source(
+        id = "abc-news",
+        name = "ABC News",
+        description = "Your trusted source for breaking news, analysis, exclusive interviews, and videos at ABCNews.com.",
+        url = "https://abcnews.go.com",
+        category = "general",
+        language = "en",
+        country = "us"
+    )
+    
+    NewsAppTheme {
+        Surface {
+            NewsSourceItem(
+                source = sampleSource,
+                onClick = {}
+            )
+        }
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun NewsSourceItem(
@@ -153,7 +224,9 @@ private fun NewsSourceItem(
         ) {
             Text(
                 text = source.name,
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.Bold
+                ),
                 color = MaterialTheme.colorScheme.primary
             )
             
@@ -171,11 +244,17 @@ private fun NewsSourceItem(
             
             Spacer(modifier = Modifier.height(8.dp))
             
-            Text(
-                text = source.url.toString(),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.primary
-            )
+            Surface(
+                color = MaterialTheme.colorScheme.primary,
+                shape = RoundedCornerShape(4.dp),
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            ) {
+                Text(
+                    text = source.category.toString().replaceFirstChar { it.uppercase() },
+                    style = MaterialTheme.typography.labelSmall,
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                )
+            }
         }
     }
 }
