@@ -67,4 +67,6 @@
     <string name="selected_languages">Selected: %1$s</string>
     <string name="max_languages_selected">You can select up to 2 languages</string>
     <string name="action_done">Done</string>
+    <string name="error_loading_countries">Error loading countries</string>
+    <string name="no_countries_available">No countries available.</string>
 </resources>

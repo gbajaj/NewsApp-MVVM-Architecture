@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gauravbajaj.newsapp.data.model.Country
 import com.gauravbajaj.newsapp.ui.base.UiState
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 /**
@@ -15,14 +17,14 @@ import javax.inject.Inject
  */
 class CountrySourcesViewModel @Inject constructor() : ViewModel() {
 
-    private val _countries = MutableLiveData<UiState<List<Country>>>()
-    val countries: LiveData<UiState<List<Country>>> = _countries
+    private val _countries = MutableStateFlow<UiState<List<Country>>>(UiState.Loading)
+    val countries: StateFlow<UiState<List<Country>>> = _countries
 
     init {
         loadCountries()
     }
 
-    private fun loadCountries() {
+    fun loadCountries() {
         viewModelScope.launch {
             try {
                 _countries.value = UiState.Loading
