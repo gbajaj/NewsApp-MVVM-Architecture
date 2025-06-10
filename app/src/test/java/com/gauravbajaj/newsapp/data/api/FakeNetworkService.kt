@@ -14,7 +14,7 @@ import javax.inject.Inject
 class FakeNetworkService @Inject constructor() : NetworkService {
 
     // Properties to control the behavior of the fake
-    private var topHeadlinesResponse: TopHeadlinesResponse = TopHeadlinesResponse("ok", 0, emptyList())
+    internal var topHeadlinesResponse: TopHeadlinesResponse = TopHeadlinesResponse("ok", 0, emptyList())
     internal var sourcesResponse: SourcesResponse = SourcesResponse("ok", emptyList())
     internal var exception: Exception? = null
 
