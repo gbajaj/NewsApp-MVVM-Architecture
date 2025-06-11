@@ -18,12 +18,8 @@ class LanguagesViewModel @Inject constructor(
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
-    private val _languages = MutableStateFlow<UiState<List<Language>>>(UiState.Loading)
+    private val _languages = MutableStateFlow<UiState<List<Language>>>(UiState.Initial)
     val languages: StateFlow<UiState<List<Language>>> = _languages
-
-    init {
-        loadLanguages()
-    }
 
     fun loadLanguages() {
         // Load languages from a data source (e.g., API, database) and update the _languages LiveData with the sorted list
