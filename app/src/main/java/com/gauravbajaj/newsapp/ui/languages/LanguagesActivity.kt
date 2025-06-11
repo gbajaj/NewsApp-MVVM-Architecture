@@ -52,7 +52,12 @@ class LanguagesActivity : ComponentActivity() {
                                 }
                             }
                         },
-                        onDoneClicked = { NewsListActivity.start(this@LanguagesActivity) }
+                        onDoneClicked = {
+                            NewsListActivity.start(
+                                this@LanguagesActivity,
+                                language = selectedLanguages.joinToString(",")
+                            )
+                        }
                     )
                 }
             }

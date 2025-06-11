@@ -9,9 +9,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gauravbajaj.newsapp.ui.base.UiState
 import com.gauravbajaj.newsapp.ui.theme.NewsAppTheme
+import com.gauravbajaj.newsapp.utils.CustomTabsHelper
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -33,11 +35,14 @@ class TopHeadlineActivity : ComponentActivity() {
                             viewModel.loadTopHeadlines()
                         }
                     }
+                    val context = LocalContext.current
                     TopHeadlinesScreen(
                         onBackPressed = { onBackPressed() },
                         uiState = uiState.value,
                         loadTopHeadlines = { viewModel.loadTopHeadlines() },
-                        onArticleClick = { url -> })
+                        onArticleClick = { url ->
+                            CustomTabsHelper.launchUrl(context, url)
+                        })
                 }
             }
         }
