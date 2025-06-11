@@ -1,7 +1,5 @@
 package com.gauravbajaj.newsapp.ui.news_sources
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gauravbajaj.newsapp.data.model.Source
@@ -20,7 +18,7 @@ class NewsSourcesViewModel @Inject constructor(
     private val repository: NewsSourcesRepository
 ) : ViewModel() {
 
-    private val _newsSources = MutableStateFlow<UiState<List<Source>>>( UiState.Loading  )
+    private val _newsSources = MutableStateFlow<UiState<List<Source>>>( UiState.Initial  )
     val newsSources: StateFlow<UiState<List<Source>>> = _newsSources
 
     fun loadNewsSources() {

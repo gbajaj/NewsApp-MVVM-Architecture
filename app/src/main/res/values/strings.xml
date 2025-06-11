@@ -35,6 +35,7 @@
     <string name="published_on">Published on %1$s</string>
     
     <!-- News Sources Activity -->
+    <string name="navigate_back_button_desc">Back</string>
     <string name="error_loading_sources">Error loading news sources. Please try again later.</string>
     <string name="no_sources_found">No news sources found</string>
     <string name="all_categories">All Categories</string>
