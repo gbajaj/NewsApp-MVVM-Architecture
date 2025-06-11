@@ -193,6 +193,7 @@ fun NewsListScreen(
                     modifier = Modifier.padding(padding)
                 )
             }
+            else -> {}
         }
     }
 }

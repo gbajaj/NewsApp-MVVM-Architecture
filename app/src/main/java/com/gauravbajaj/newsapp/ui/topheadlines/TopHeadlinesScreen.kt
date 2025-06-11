@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -27,34 +28,30 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import com.gauravbajaj.newsapp.R
 import com.gauravbajaj.newsapp.data.model.Article
 import com.gauravbajaj.newsapp.ui.base.UiState
-import com.gauravbajaj.newsapp.utils.CustomTabsHelper
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun TopHeadlinesScreen(onBackPressed: () -> Unit, viewModel: TopHeadlineViewModel = viewModel()) {
+internal fun TopHeadlinesScreen(
+    onBackPressed: () -> Unit,
+    uiState: UiState<List<Article>>,
+    loadTopHeadlines: () -> Unit,
+    onArticleClick: (String) -> Unit
+) {
     val context = LocalContext.current
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-    LaunchedEffect(Unit) {
-        viewModel.loadTopHeadlines()
-    }
 
     Scaffold(
         topBar = {
@@ -77,44 +74,59 @@ internal fun TopHeadlinesScreen(onBackPressed: () -> Unit, viewModel: TopHeadlin
             )
         }
     ) { padding ->
-        when (val state = uiState) {
-            is UiState.Success -> {
-                ArticleList(
-                    articles = state.data,
-                    modifier = Modifier.padding(padding),
-                    onArticleClick = { article ->
-                        article.url.let { url ->
-                            CustomTabsHelper.launchUrl(context, url)
-                        }
-                    }
-                )
-            }
-
-            is UiState.Loading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(padding),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
-            }
-
-            is UiState.Error -> {
-                ErrorState(
-                    message = state.message ?: context.getString(R.string.error_loading_news),
-                    onRetry = {
-                        viewModel.loadTopHeadlines()
-                    },
-                    modifier = Modifier.padding(padding)
-                )
-            }
-
-            else -> {}
-        }
+        TopHeadlinesContent(
+            uiState = uiState,
+            padding = padding,
+            onRetry = loadTopHeadlines,
+            onArticleClick = onArticleClick,
+        )
     }
 }
+
+@Composable
+fun TopHeadlinesContent(
+    uiState: UiState<List<Article>>,
+    padding: PaddingValues,
+    onRetry: () -> Unit,
+    onArticleClick: (String) -> Unit,
+) {
+    val context = LocalContext.current
+
+    when (uiState) {
+        is UiState.Success -> {
+            ArticleList(
+                articles = uiState.data,
+                modifier = Modifier.padding(padding),
+                onArticleClick = { article ->
+                    onArticleClick(article.url)
+                }
+            )
+        }
+
+        is UiState.Loading -> {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.testTag("loading_indicator")
+                )
+            }
+        }
+
+        is UiState.Error -> {
+            ErrorState(
+                message = uiState.message ?: context.getString(R.string.error_loading_news),
+                onRetry = onRetry,
+                modifier = Modifier.padding(padding)
+            )
+        }
+        else -> {}
+    }
+}
+
 
 @Composable
 fun ArticleList(
