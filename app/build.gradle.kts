@@ -1,3 +1,6 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -5,16 +8,22 @@ plugins {
     id("kotlin-parcelize")
     id("com.google.dagger.hilt.android")
 }
-
+// Load local.properties
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(FileInputStream(localPropertiesFile))
+}
 android {
     buildFeatures {
         viewBinding = true
         compose = true
+        buildConfig = true
     }
-    
+
     namespace = "com.gauravbajaj.newsapp"
     compileSdk = 35
-    
+
     composeOptions {
         kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
     }
@@ -31,6 +40,12 @@ android {
     }
 
     buildTypes {
+        debug {
+            val apiKey = localProperties.getProperty("API_KEY")
+                ?: error("API_KEY not found in local.properties")
+            buildConfigField("String", "API_KEY", "\"$apiKey\"")
+
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
