@@ -1,6 +1,13 @@
 # NewsApp-MVVM-Architecture
 
-## The Complete Project Folder Structure
+### The Complete Project Folder Structure
+
+You can connect with me on:
+
+- [LinkedIn](https://www.linkedin.com/in/gauravbaja)
+- [GitHub](https://github.com/gbajaj)
+  
+```
 .
 ├── README.md
 ├── app
@@ -158,5 +165,31 @@
 ├── print.txt
 ├── settings.gradle.kts
 └── tree
+```
 
-58 directories, 99 files
+
+### TODO
+
+- Add more test cases especially Android instrumentation tests.
+- Add Room Database to suppor offline first app.
+- Work on the feedback received.
+
+## Did this project help you? Great! Please show your love ❤️ by putting a ⭐ on this project ✌️
+
+### License
+
+```
+   Copyright (C) 2025 Gaurav Bajaj
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+```
