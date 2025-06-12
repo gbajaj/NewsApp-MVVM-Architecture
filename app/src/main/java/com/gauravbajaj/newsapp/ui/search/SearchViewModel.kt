@@ -6,16 +6,19 @@ import com.gauravbajaj.newsapp.data.model.Article
 import com.gauravbajaj.newsapp.data.repository.SearchRepository
 import com.gauravbajaj.newsapp.ui.base.UiSearchState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNot
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
+import okio.IOException
 import javax.inject.Inject
 
 /**
@@ -24,9 +27,22 @@ import javax.inject.Inject
  * This class is responsible for managing the UI-related data for the search screen
  * and interacting with the [SearchRepository] to fetch news articles based on a query.
  *
- * @property searchRepository The repository used to perform the news search.
+ * It uses Kotlin Flows to handle asynchronous operations and UI state updates in a reactive manner.
+ * The search query is debounced and filtered to optimize performance and prevent unnecessary API calls.
+ *
+ * Key features:
+ * - **Debounced search**: Prevents rapid API calls while the user is typing.
+ * - **State management**: Uses [UiSearchState] to represent different UI states (Loading, Success, Error, Empty).
+ * - **Error handling**: Catches exceptions during the search process and updates the UI accordingly.
+ * - **Flow-based architecture**: Leverages Kotlin Flows for managing asynchronous data streams.
+ *
+ * @property searchRepository The repository responsible for fetching news articles.
+ * @property _uiState A [MutableStateFlow] that holds the current UI state.
+ * @property uiState A read-only [StateFlow] that exposes the UI state to observers.
+ * @property _searchQuery A [MutableStateFlow] that holds the current search query.
+ * @property searchQuery A read-only [StateFlow] that exposes the search query to observers.
  */
-@OptIn(FlowPreview::class)
+@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val searchRepository: SearchRepository
@@ -54,63 +70,67 @@ class SearchViewModel @Inject constructor(
     private val _searchQuery = MutableStateFlow<String>("")
     val searchQuery: StateFlow<String> = _searchQuery
 
-    /**
-     * Initializes the search query flow processing.
-     *
-     * This function sets up a flow pipeline that processes search queries:
-     * 1. Debounces the input to prevent rapid successive searches.
-     * 2. Filters out blank queries.
-     * 3. Ensures only distinct queries are processed.
-     * 4. Triggers a search for each valid query.
-     *
-     * @param _searchQuery The [MutableStateFlow] containing the current search query.
-     * @param viewModelScope The [CoroutineScope] in which the flow will be collected.
-     * @param searchNews The function to be called for performing the actual search.
-     *
-     * Note: This function doesn't return a value, but initiates a continuous flow processing.
-     */
     init {
+        createSearchQueryFlow()
+    }
+
+    /**
+     * Creates and launches a flow that processes search queries.
+     *
+     * This function sets up a reactive pipeline for handling search queries:
+     * 1. **Debounce**: It waits for 300 milliseconds after the last query change before processing. This prevents excessive API calls during typing.
+     * 2. **Filter**: It ignores blank queries (empty or whitespace-only).
+     * 3. **Distinct**: It only processes a query if it's different from the previous one.
+     * 4. **flatMapLatest**: When a valid, distinct query is received, it cancels any ongoing search and starts a new one by calling `searchNewsFlow(query)`.
+     * 5. **Catch**: It handles exceptions that might occur during the search operation (e.g., network errors from the repository).
+     *    - If an `IOException` occurs, it clears the search query and restarts the flow, effectively allowing the user to retry the search.
+     *    - For other errors, it updates the `_uiState` to reflect the error.
+     * 6. **onEach**: For each list of articles emitted by `searchNewsFlow`, it updates the `_uiState`.
+     *    - If the list is not empty, it sets the state to `UiSearchState.Success`.
+     *    - If the list is empty, it sets the state to `UiSearchState.Empty`.
+     * 7. **launchIn**: The entire flow is launched within the `viewModelScope`, ensuring it's managed by the ViewModel's lifecycle.
+     */
+    private fun createSearchQueryFlow() {
         _searchQuery
             .debounce(300)
             .filterNot { it.isBlank() }
             .distinctUntilChanged()
-            .onEach { query ->   // Perform the search when the query changes
-                searchNews(query)
+            .flatMapLatest { query ->// Cancel any ongoing search and start a new one
+                // Perform the search when the query changes
+                // Now searchNews returns a Flow
+                searchNewsFlow(query)
+            }
+            .catch { e -> // Catch errors from the repository flow here
+                if (e is IOException) {
+                    setSearchQuery("")
+                    // Retry the search if an IOException occurs
+                    createSearchQueryFlow()
+                }
+                _uiState.value =
+                    UiSearchState.Error(e.message ?: "An unknown error occurred in repository")
+            }
+            .onEach { articles -> // Process the emitted articles
+                _uiState.value = if (articles.isNotEmpty()) {
+                    UiSearchState.Success(articles)
+                } else {
+                    UiSearchState.Empty // Or Error("No articles found") depending on desired behavior
+                }
             }
             .launchIn(viewModelScope)
     }
 
     /**
-     * Initiates a search for news articles based on the provided query.
+     * Returns a Flow of news articles based on the provided query.
      *
-     * This function updates the UI state to reflect the current state of the search operation.
-     * It starts by setting the state to Loading, then performs the search using the searchRepository.
-     * The results are collected and the UI state is updated accordingly:
-     * - If articles are found, the state is set to Success with the list of articles.
-     * - If no articles are found, the state is set to Error with a "No articles found" message.
-     * - If an error occurs during the search, the state is set to Error with the error message.
+     * This function performs the search using the searchRepository and returns the Flow
+     * of articles. It also sets the initial loading state.
      *
      * @param query The search term used to find news articles.
-     *
-     * Note: This function doesn't return a value directly, but updates the [_uiState] property,
-     * which can be observed for changes in the UI.
+     * @return A Flow emitting a list of Article objects.
      */
-    fun searchNews(query: String) {
-        _uiState.value = UiSearchState.Loading
-
-        viewModelScope.launch {
-            searchRepository.searchNews(query = query)
-                .catch { e ->
-                    _uiState.value = UiSearchState.Error(e.message ?: "An unknown error occurred")
-                }
-                .collect { articles ->
-                    _uiState.value = if (articles.isNotEmpty()) {
-                        UiSearchState.Success(articles)
-                    } else {
-                        UiSearchState.Error("No articles found")
-                    }
-                }
-        }
+    private fun searchNewsFlow(query: String): Flow<List<Article>> {
+        _uiState.value = UiSearchState.Loading // Set loading state before starting the flow
+        return searchRepository.searchNews(query = query)
     }
 
     /**

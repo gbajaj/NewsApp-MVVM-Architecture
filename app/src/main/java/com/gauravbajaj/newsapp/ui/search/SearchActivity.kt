@@ -179,7 +179,9 @@ fun SearchScreen(
                 is UiSearchState.Error -> {
                     ErrorState(
                         message = state.message ?: context.getString(R.string.error_loading_news),
-                        onRetry = { viewModel.searchNews(searchQuery) }
+                        onRetry = {
+                            viewModel.setSearchQuery(searchQuery)
+                        }
                     )
                 }
 
