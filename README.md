@@ -67,9 +67,8 @@ While not explicitly shown in a simple diagram, the following components are cru
 * **Dependency Injection (Hilt)**: Utilized for providing dependencies throughout the application, simplifying object creation and management.
 * **Kotlin Coroutines and Flow**: Employed for asynchronous programming and reactive streams, enabling efficient handling of long-running operations and data changes.
 
----
-
 This architectural approach promotes a clear **separation of concerns**, enhancing the **testability** and **maintainability** of this application. Each layer has a specific responsibility, making it easier to modify or replace components without affecting the entire system.
+
 ---
 
 ### The Complete Project Folder Structure
@@ -233,10 +232,7 @@ You can connect with me on:
 ├── gradle.properties
 ├── gradlew
 ├── gradlew.bat
-├── local.properties
-├── print.txt
-├── settings.gradle.kts
-└── tree
+└──  settings.gradle.kts
 ```
 ---
 
