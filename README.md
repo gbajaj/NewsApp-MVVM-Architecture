@@ -16,6 +16,62 @@
 </p>
 
 ---
+## App Architecture: Key Components and Data Flow
+
+Description below outlines the key components and data flow within this application's architecture, emphasizing a clear separation of concerns for improved maintainability and testability.
+
+---
+
+### Key Components and Their Roles
+
+1.  **UI Layer (View)**:
+    * **Compose Screens** (e.g., `SearchActivity`)
+    * **Role**: Responsible for displaying data to the user and capturing all user interactions.
+
+2.  **ViewModel Layer**:
+    * **XXXViewModel** (e.e.g `SearchViewModel`)
+    * **Role**: Manages UI-related data and state, processes user actions, and communicates with the **Repository Layer**.
+
+3.  **Repository Layer**:
+    * **SearchRepository**
+    * **Role**: Serves as the single source of truth for data. It decides when and how to  fetch data from the network.
+
+4.  **Network Layer**:
+    * **NetworkService**
+    * **Role**: Handles all API calls to the external news service.
+
+5.  **External API**:
+    * The actual news service API that provides the data consumed by the application.
+
+---
+
+### Data Flow
+
+Understanding the data flow illustrates how different components interact to deliver information to the user:
+
+1.  **User Interaction**: The user interacts with the UI (e.g., enters a search query).
+2.  **UI Notification**: The UI notifies the **ViewModel** of the user's action.
+3.  **ViewModel Request**: The **ViewModel** requests data from the **Repository**.
+4.  **Repository Fetch**: The **Repository** fetches data from the **NetworkService**.
+5.  **NetworkService API Call**: The **NetworkService** makes an API call to the **External API** (the news service).
+6.  **Data Flow Back**: Data flows back up the chain, potentially undergoing transformations at each layer to fit the needs of the higher layers.
+7.  **ViewModel Update**: The **ViewModel** updates its state with the received data.
+8.  **UI Update**: The UI observes the **ViewModel's** state changes and updates accordingly to display the new information to the user.
+
+---
+
+### Additional Components
+
+While not explicitly shown in a simple diagram, the following components are crucial for the application's functionality:
+
+* **Dependency Injection (Hilt)**: Utilized for providing dependencies throughout the application, simplifying object creation and management.
+* **Kotlin Coroutines and Flow**: Employed for asynchronous programming and reactive streams, enabling efficient handling of long-running operations and data changes.
+
+---
+
+This architectural approach promotes a clear **separation of concerns**, enhancing the **testability** and **maintainability** of this application. Each layer has a specific responsibility, making it easier to modify or replace components without affecting the entire system.
+---
+
 ### The Complete Project Folder Structure
 
 You can connect with me on:
