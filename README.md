@@ -1,5 +1,8 @@
 # NewsApp-MVVM-Architecture
 
+
+![Mvvm Architecure](https://github.com/user-attachments/assets/f9d3604a-8c23-40b6-9394-4926c08347ca)
+
 ---
 ### App Screens from Google Pixel 9 Pro
 
