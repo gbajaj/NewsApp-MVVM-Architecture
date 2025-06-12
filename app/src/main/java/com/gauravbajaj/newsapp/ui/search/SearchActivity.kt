@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -48,12 +47,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -106,21 +102,21 @@ fun SearchScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var searchQuery by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
-    val focusManager = LocalFocusManager.current
     val context = LocalContext.current
-    
+
     // Request focus when the screen is first displayed
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
     }
-    
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text(stringResource(R.string.search_news)) },
                 navigationIcon = {
                     IconButton(onClick = {
-                        (context as? ComponentActivity)?.onBackPressed() }) {
+                        (context as? ComponentActivity)?.onBackPressed()
+                    }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = "Navigate Up"
@@ -143,12 +139,9 @@ fun SearchScreen(
             // Search Bar
             SearchBar(
                 query = searchQuery,
-                onQueryChange = { searchQuery = it },
-                onSearch = {
-                    if (searchQuery.isNotBlank()) {
-                        viewModel.searchNews(searchQuery)
-                        focusManager.clearFocus()
-                    }
+                onQueryChange = {
+                    searchQuery = it
+                    viewModel.setSearchQuery(searchQuery)
                 },
                 onClear = {
                     searchQuery = ""
@@ -169,6 +162,7 @@ fun SearchScreen(
                         CircularProgressIndicator()
                     }
                 }
+
                 is UiSearchState.Success -> {
                     if (state.data.isEmpty()) {
                         EmptySearchResults()
@@ -181,12 +175,14 @@ fun SearchScreen(
                         )
                     }
                 }
+
                 is UiSearchState.Error -> {
                     ErrorState(
                         message = state.message ?: context.getString(R.string.error_loading_news),
                         onRetry = { viewModel.searchNews(searchQuery) }
                     )
                 }
+
                 is UiSearchState.Empty -> {
                     // Initial empty state with search hint
                     InitialSearchHint()
@@ -201,47 +197,17 @@ fun SearchScreen(
 private fun SearchBar(
     query: String,
     onQueryChange: (String) -> Unit,
-    onSearch: () -> Unit,
     onClear: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val focusManager = LocalFocusManager.current
-    
-    // This will be true when the user has submitted the search
-    var isSearchSubmitted by remember { mutableStateOf(false) }
-    
-    // Handle search submission
-    LaunchedEffect(isSearchSubmitted) {
-        if (isSearchSubmitted && query.isNotBlank()) {
-            onSearch()
-            focusManager.clearFocus()
-            isSearchSubmitted = false
-        }
-    }
-    
     OutlinedTextField(
         value = query,
         onValueChange = { newValue ->
             onQueryChange(newValue)
-            isSearchSubmitted = false
         },
         modifier = modifier
             .fillMaxWidth()
-            .height(56.dp)
-            .onPreviewKeyEvent { keyEvent ->
-                // Handle hardware keyboard Enter key
-                if (keyEvent.nativeKeyEvent.keyCode == android.view.KeyEvent.KEYCODE_ENTER && 
-                    keyEvent.nativeKeyEvent.action == android.view.KeyEvent.ACTION_UP) {
-                    if (query.isNotBlank()) {
-                        isSearchSubmitted = true
-                        true // Consume the event
-                    } else {
-                        false
-                    }
-                } else {
-                    false
-                }
-            },
+            .height(56.dp),
         placeholder = { Text(stringResource(R.string.search_hint)) },
         leadingIcon = {
             Icon(
@@ -264,15 +230,7 @@ private fun SearchBar(
         singleLine = true,
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
-            imeAction = ImeAction.Search,
             autoCorrect = true
-        ),
-        keyboardActions = KeyboardActions(
-            onSearch = {
-                if (query.isNotBlank()) {
-                    isSearchSubmitted = true
-                }
-            }
         ),
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = MaterialTheme.colorScheme.primary,
@@ -333,7 +291,7 @@ private fun SearchResultItem(
                 }
                 Spacer(modifier = Modifier.height(8.dp))
             }
-            
+
             Text(
                 text = article.title ?: "",
                 style = MaterialTheme.typography.titleMedium,
@@ -341,7 +299,7 @@ private fun SearchResultItem(
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
-            
+
             Spacer(modifier = Modifier.height(4.dp))
 
             article.description?.let { description ->
@@ -354,7 +312,7 @@ private fun SearchResultItem(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
             }
-            
+
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
