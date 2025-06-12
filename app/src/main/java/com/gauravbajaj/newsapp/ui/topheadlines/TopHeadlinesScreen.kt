@@ -174,8 +174,8 @@ private fun ArticleItem(
                 Image(
                     painter = rememberAsyncImagePainter(
                         model = url,
-                        placeholder = painterResource(id = R.drawable.ic_launcher_foreground),
-                        error = painterResource(id = R.drawable.ic_launcher_foreground)
+                        placeholder = painterResource(id = R.drawable.ic_placeholder),
+                        error = painterResource(id = R.drawable.ic_placeholder)
                     ),
                     contentDescription = null,
                     modifier = imageModifier,
