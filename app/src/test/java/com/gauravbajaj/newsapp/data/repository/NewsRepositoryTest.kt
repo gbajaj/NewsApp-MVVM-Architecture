@@ -1,5 +1,6 @@
 package com.gauravbajaj.newsapp.data.repository
 
+import app.cash.turbine.test
 import com.gauravbajaj.newsapp.data.api.FakeNetworkService
 import com.gauravbajaj.newsapp.data.model.Article
 import com.gauravbajaj.newsapp.data.model.Source
@@ -49,7 +50,9 @@ class NewsRepositoryTest {
         val result = newsRepository.getNews(testSource, testCountry, testLanguage)
 
         // Then
-        assertEquals(testArticles, result)
+        result.collect {
+            assertEquals(testArticles, it)
+        }
     }
 
     @Test
@@ -61,17 +64,21 @@ class NewsRepositoryTest {
         val result = newsRepository.getNews()
 
         // Then
-        assertEquals(testArticles, result)
+        result.collect {
+            assertEquals(testArticles, it)
+        }
     }
 
 
-    @Test(expected = IOException::class)
+    @Test
     fun `getNews when network throws exception should propagate exception`() = runTest {
         // Given
         fakeNetworkService.setError(IOException("Network error"))
 
         // When
-        newsRepository.getNews(testSource, testCountry, testLanguage)
+        newsRepository.getNews(testSource, testCountry, testLanguage).test {
+            awaitError() is IOException
+        }
 
         // Then - IOException is expected to be thrown
     }
@@ -85,6 +92,9 @@ class NewsRepositoryTest {
         val result = newsRepository.getNews(testSource, testCountry, testLanguage)
 
         // Then
-        assertTrue(result.isEmpty())
+        result.collect {
+            assertTrue(it.isEmpty())
+        }
+
     }
 }
