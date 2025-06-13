@@ -27,10 +27,11 @@ class TopHeadlineViewModelTest {
     private val fakeNetworkService = FakeNetworkService()
     private val repository = TopHeadlineRepository(fakeNetworkService)
     private lateinit var viewModel: TopHeadlineViewModel
+    private val testDispatcher = coroutineRule.testDispatcher
 
     @Before
     fun setup() {
-        viewModel = TopHeadlineViewModel(repository)
+        viewModel = TopHeadlineViewModel(repository, testDispatcher)
     }
 
     @Test
@@ -53,8 +54,13 @@ class TopHeadlineViewModelTest {
 
         // When & Then
         viewModel.uiState.test {
-            assertEquals(UiState.Loading, awaitItem())
+            assertEquals(UiState.Initial, awaitItem())
             viewModel.loadTopHeadlines(testCountry)
+
+            testDispatcher.scheduler.advanceUntilIdle()
+            awaitItem() as UiState.Loading
+            testDispatcher.scheduler.advanceUntilIdle()
+
             val successState = awaitItem() as UiState.Success
             assertEquals(testArticles, successState.data)
             cancelAndIgnoreRemainingEvents()
@@ -69,8 +75,13 @@ class TopHeadlineViewModelTest {
 
         // When & Then
         viewModel.uiState.test {
-            assertEquals(UiState.Loading, awaitItem())
+            assertEquals(UiState.Initial, awaitItem())
+
             viewModel.loadTopHeadlines("")
+
+            awaitItem() as UiState.Loading
+            testDispatcher.scheduler.advanceUntilIdle()
+
             val successState = awaitItem() as UiState.Success
             assertTrue(successState.data.isEmpty())
             cancelAndIgnoreRemainingEvents()
@@ -86,8 +97,12 @@ class TopHeadlineViewModelTest {
 
         // When & Then
         viewModel.uiState.test {
-            assertEquals(UiState.Loading, awaitItem())
+            assertEquals(UiState.Initial, awaitItem())
             viewModel.loadTopHeadlines(testCountry)
+
+            awaitItem() as UiState.Loading
+            testDispatcher.scheduler.advanceUntilIdle()
+
             val errorState = awaitItem() as UiState.Error
             assertEquals(errorMessage, errorState.message)
             cancelAndIgnoreRemainingEvents()
@@ -113,8 +128,12 @@ class TopHeadlineViewModelTest {
 
         // When & Then
         viewModel.uiState.test {
-            assertEquals(UiState.Loading, awaitItem())
+            assertEquals(UiState.Initial, awaitItem())
+
             viewModel.loadTopHeadlines("us")
+            awaitItem() as UiState.Loading
+            testDispatcher.scheduler.advanceUntilIdle()
+
             val successState = awaitItem() as UiState.Success
             with(successState.data.first()) {
                 assertEquals("Real Title", title)
