@@ -5,7 +5,9 @@ import com.gauravbajaj.newsapp.data.repository.NewsRepository
 import com.gauravbajaj.newsapp.data.repository.NewsSourcesRepository
 import com.gauravbajaj.newsapp.data.repository.SearchRepository
 import com.gauravbajaj.newsapp.data.repository.TopHeadlineRepository
+import com.gauravbajaj.newsapp.di.BackgroundContext
 import com.gauravbajaj.newsapp.di.BaseUrl
+import com.gauravbajaj.newsapp.di.MainContext
 import com.gauravbajaj.newsapp.utils.AppConstant.API_KEY
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -13,6 +15,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -105,4 +109,13 @@ class ApplicationModule() {
     fun provideTopHeadlineRepository(networkService: NetworkService) =
         TopHeadlineRepository(networkService)
 
+    @BackgroundContext
+    @Provides
+    @Singleton
+    fun provideIODispatcher():CoroutineDispatcher = Dispatchers.IO
+
+    @MainContext
+    @Provides
+    @Singleton
+    fun provideMainDispatcher():CoroutineDispatcher = Dispatchers.Main
 }

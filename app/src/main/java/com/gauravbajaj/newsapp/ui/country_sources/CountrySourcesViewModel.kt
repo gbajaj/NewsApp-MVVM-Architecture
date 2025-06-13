@@ -4,10 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gauravbajaj.newsapp.data.model.Country
 import com.gauravbajaj.newsapp.data.repository.CountriesRepository
+import com.gauravbajaj.newsapp.di.BackgroundContext
 import com.gauravbajaj.newsapp.ui.base.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -17,7 +20,10 @@ import javax.inject.Inject
  * @author Gaurav Bajaj
  */
 @HiltViewModel
-class CountrySourcesViewModel @Inject constructor(val countriesRepository: CountriesRepository) :
+class CountrySourcesViewModel @Inject constructor(
+    val countriesRepository: CountriesRepository,
+    @BackgroundContext val dispatcher: CoroutineDispatcher
+) :
     ViewModel() {
 
     private val _countries = MutableStateFlow<UiState<List<Country>>>(UiState.Loading)
@@ -31,7 +37,7 @@ class CountrySourcesViewModel @Inject constructor(val countriesRepository: Count
         viewModelScope.launch {
             try {
                 _countries.value = UiState.Loading
-                countriesRepository.getCountries().collect { countriesList ->
+                countriesRepository.getCountries().flowOn(dispatcher).collect { countriesList ->
                     countriesList.sortedBy { it.name }
                     _countries.value = UiState.Success(countriesList)
                 }

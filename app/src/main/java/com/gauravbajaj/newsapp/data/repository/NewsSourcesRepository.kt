@@ -11,7 +11,7 @@ import javax.inject.Singleton
 class NewsSourcesRepository @Inject constructor(
     private val networkService: NetworkService
 ) {
-    suspend fun getNewsSources(): Flow<List<Source>> = flow {
+    fun getNewsSources(): Flow<List<Source>> = flow {
         val response = networkService.getNewsSources()
         if (response.status == "ok") {
             emit(response.sources ?: emptyList())

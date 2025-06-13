@@ -4,8 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gauravbajaj.newsapp.data.model.Article
 import com.gauravbajaj.newsapp.data.repository.SearchRepository
+import com.gauravbajaj.newsapp.di.BackgroundContext
 import com.gauravbajaj.newsapp.ui.base.UiSearchState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
@@ -16,6 +18,7 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import okio.IOException
@@ -45,7 +48,8 @@ import javax.inject.Inject
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val searchRepository: SearchRepository
+    private val searchRepository: SearchRepository,
+    @BackgroundContext private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<UiSearchState<List<Article>>>(UiSearchState.Empty)
@@ -130,7 +134,7 @@ class SearchViewModel @Inject constructor(
      */
     private fun searchNewsFlow(query: String): Flow<List<Article>> {
         _uiState.value = UiSearchState.Loading // Set loading state before starting the flow
-        return searchRepository.searchNews(query = query)
+        return searchRepository.searchNews(query = query).flowOn(dispatcher)
     }
 
     /**

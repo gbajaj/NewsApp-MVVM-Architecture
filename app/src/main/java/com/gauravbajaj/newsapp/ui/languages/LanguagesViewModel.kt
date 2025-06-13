@@ -4,16 +4,21 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gauravbajaj.newsapp.data.model.Language
 import com.gauravbajaj.newsapp.data.repository.LanguagesRepository
+import com.gauravbajaj.newsapp.di.BackgroundContext
 import com.gauravbajaj.newsapp.ui.base.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 
 @HiltViewModel
 class LanguagesViewModel @Inject constructor(
     val languagesRepository: LanguagesRepository,
+    @BackgroundContext val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
     private val _languages = MutableStateFlow<UiState<List<Language>>>(UiState.Initial)
@@ -24,7 +29,7 @@ class LanguagesViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _languages.value = UiState.Loading
-                languagesRepository.getLanguages().collect { result ->
+                languagesRepository.getLanguages().flowOn(dispatcher).collect { result ->
                     _languages.value = UiState.Success(result)
                 }
             } catch (e: Exception) {
