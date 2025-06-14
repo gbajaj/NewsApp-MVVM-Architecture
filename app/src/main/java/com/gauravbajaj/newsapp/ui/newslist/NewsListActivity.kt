@@ -1,5 +1,6 @@
 package com.gauravbajaj.newsapp.ui.newslist
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -15,25 +16,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -54,7 +46,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.rememberAsyncImagePainter
 import com.gauravbajaj.newsapp.R
 import com.gauravbajaj.newsapp.data.model.Article
+import com.gauravbajaj.newsapp.data.model.Source
 import com.gauravbajaj.newsapp.ui.base.UiState
+import com.gauravbajaj.newsapp.ui.components.LoadingIndicator
+import com.gauravbajaj.newsapp.ui.components.CommonTopBar
+import com.gauravbajaj.newsapp.ui.components.EmptyState
+import com.gauravbajaj.newsapp.ui.components.ErrorAndRetryState
 import com.gauravbajaj.newsapp.ui.theme.NewsAppTheme
 import com.gauravbajaj.newsapp.utils.CustomTabsHelper
 import com.gauravbajaj.newsapp.utils.formatDate
@@ -92,7 +89,7 @@ class NewsListActivity : ComponentActivity() {
         private const val EXTRA_LANGUAGE = "extra_language"
 
         fun start(
-            context: android.content.Context,
+            context: Context,
             source: String? = null,
             country: String? = null,
             language: String? = null
@@ -137,37 +134,17 @@ fun NewsListScreen(
             errorMessage.value = null
         }
     }
-
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text("News") },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
-                ),
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Back"
-                        )
-                    }
-                }
+            CommonTopBar(
+                text = "News",
+                onBackClick = onBackClick, theme = MaterialTheme,
             )
         }
     ) { padding ->
         when (val state = uiState) {
             is UiState.Loading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(padding),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
+                LoadingIndicator(padding)
             }
             is UiState.Success -> {
                 if (state.data.isEmpty()) {
@@ -181,13 +158,12 @@ fun NewsListScreen(
                         onArticleClick = { article ->
                             CustomTabsHelper.launchUrl(context, article.url)
                         },
-                        onRefresh = { viewModel.loadNews(source, country, language) },
                         modifier = Modifier.padding(padding)
                     )
                 }
             }
             is UiState.Error -> {
-                ErrorState(
+                ErrorAndRetryState(
                     message = state.message ?: stringResource(R.string.error_generic),
                     onRetry = { viewModel.loadNews(source, country, language) },
                     modifier = Modifier.padding(padding)
@@ -202,15 +178,8 @@ fun NewsListScreen(
 fun NewsList(
     articles: List<Article>,
     onArticleClick: (Article) -> Unit,
-    onRefresh: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var isRefreshing by remember { mutableStateOf(false) }
-
-    LaunchedEffect(articles) {
-        isRefreshing = false
-    }
-
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(8.dp),
@@ -221,17 +190,6 @@ fun NewsList(
                 article = article,
                 onClick = { onArticleClick(article) }
             )
-        }
-    }
-
-    if (isRefreshing) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            contentAlignment = Alignment.TopCenter
-        ) {
-            CircularProgressIndicator()
         }
     }
 }
@@ -309,65 +267,13 @@ fun NewsArticleItem(
     }
 }
 
-@Composable
-fun EmptyState(
-    message: String,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Icon(
-            imageVector = Icons.Default.Search,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.size(48.dp)
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = message,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-    }
-}
-
-@Composable
-fun ErrorState(
-    message: String,
-    onRetry: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = message,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.error
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = onRetry) {
-            Text("Retry")
-        }
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
 fun NewsArticleItemPreview() {
     NewsAppTheme {
         NewsArticleItem(
             article = Article(
-                source = com.gauravbajaj.newsapp.data.model.Source("source-id", "Source Name"),
+                source = Source("source-id", "Source Name"),
                 author = "Author Name",
                 title = "Sample News Article Title That Can Be Quite Long and Might Wrap to Multiple Lines",
                 description = "This is a sample news article description that provides a brief summary of the article content. It can be longer and might wrap to multiple lines.",
@@ -381,21 +287,3 @@ fun NewsArticleItemPreview() {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun EmptyStatePreview() {
-    NewsAppTheme {
-        EmptyState(message = "No articles found")
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ErrorStatePreview() {
-    NewsAppTheme {
-        ErrorState(
-            message = "Failed to load articles. Please try again.",
-            onRetry = {}
-        )
-    }
-}

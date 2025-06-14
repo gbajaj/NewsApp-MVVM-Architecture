@@ -5,16 +5,31 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -22,6 +37,10 @@ import androidx.compose.ui.unit.sp
 import com.gauravbajaj.newsapp.R
 import com.gauravbajaj.newsapp.data.model.Country
 import com.gauravbajaj.newsapp.ui.base.UiState
+import com.gauravbajaj.newsapp.ui.components.LoadingIndicator
+import com.gauravbajaj.newsapp.ui.components.CommonTopBar
+import com.gauravbajaj.newsapp.ui.components.EmptyState
+import com.gauravbajaj.newsapp.ui.components.ErrorAndRetryState
 import com.gauravbajaj.newsapp.ui.newslist.NewsListActivity
 import com.gauravbajaj.newsapp.ui.theme.NewsAppTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -68,53 +87,28 @@ private fun CountrySourcesScreen(
     viewModel: CountrySourcesViewModel
 ) {
     val countriesState by viewModel.countries.collectAsState()
-    val context = LocalContext.current
-
     LaunchedEffect(Unit) {
         viewModel.loadCountries()
     }
 
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = { 
-                    Text(
-                        text = stringResource(R.string.select_country),
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Navigate Up"
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
-                    actionIconContentColor = MaterialTheme.colorScheme.onPrimary
-                )
+            CommonTopBar(
+                text = stringResource(R.string.select_country),
+                onBackClick = onBackClick,
+                theme = MaterialTheme,
             )
         }
     ) { padding ->
         when (val state = countriesState) {
             is UiState.Loading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(padding),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
+                LoadingIndicator(padding)
             }
             is UiState.Success -> {
                 val countries = state.data ?: emptyList()
                 if (countries.isEmpty()) {
-                    EmptyState()
+                    EmptyState(message = stringResource(R.string.no_countries_available),
+                        modifier = Modifier.padding(padding))
                 } else {
                     CountryList(
                         countries = countries,
@@ -124,7 +118,7 @@ private fun CountrySourcesScreen(
                 }
             }
             is UiState.Error -> {
-                ErrorState(
+                ErrorAndRetryState(
                     message = state.message ?: stringResource(R.string.error_loading_countries),
                     onRetry = { viewModel.loadCountries() },
                     modifier = Modifier.padding(padding)
@@ -187,53 +181,3 @@ private fun CountryItem(
         }
     }
 }
-
-@Composable
-private fun EmptyState(
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = stringResource(R.string.no_countries_available),
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-    }
-}
-
-@Composable
-private fun ErrorState(
-    message: String,
-    onRetry: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = message,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.error
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = onRetry) {
-            Text(text = stringResource(R.string.retry))
-        }
-    }
-}
-
-// Add these string resources to your strings.xml if not already present:
-/*
-    <string name="select_country">Select Country</string>
-    <string name="navigate_up">Navigate up</string>
-    <string name="no_countries_available">No countries available</string>
-    <string name="error_loading_countries">Error loading countries</string>
-    <string name="retry">Retry</string>
-*/

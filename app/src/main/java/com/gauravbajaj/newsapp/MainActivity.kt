@@ -12,19 +12,17 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.gauravbajaj.newsapp.ui.components.CommonTopBar
 import com.gauravbajaj.newsapp.ui.country_sources.CountrySourcesActivity
 import com.gauravbajaj.newsapp.ui.languages.LanguagesActivity
 import com.gauravbajaj.newsapp.ui.news_sources.NewsSourcesActivity
@@ -55,17 +53,10 @@ fun MainScreen() {
 
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        context.resources.getString(R.string.app_name),
-                        style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                )
+            CommonTopBar(
+                text = LocalContext.current.resources.getString(R.string.app_name),
+                onBackClick = {},
+                theme = MaterialTheme
             )
         }
     ) { padding ->

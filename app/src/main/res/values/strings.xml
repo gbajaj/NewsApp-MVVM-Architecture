@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">NewsApp-MVVM-Architecture</string>
+    <string name="app_name">NewsApp</string>
     
     <!-- Language Selection -->
     <string name="select_language">Select Language</string>

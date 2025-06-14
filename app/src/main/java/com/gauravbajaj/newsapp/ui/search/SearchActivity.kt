@@ -19,14 +19,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -36,7 +32,6 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -51,7 +46,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -61,6 +55,9 @@ import coil.compose.AsyncImage
 import com.gauravbajaj.newsapp.R
 import com.gauravbajaj.newsapp.data.model.Article
 import com.gauravbajaj.newsapp.ui.base.UiSearchState
+import com.gauravbajaj.newsapp.ui.components.LoadingIndicator
+import com.gauravbajaj.newsapp.ui.components.CommonTopBar
+import com.gauravbajaj.newsapp.ui.components.ErrorAndRetryState
 import com.gauravbajaj.newsapp.ui.theme.NewsAppTheme
 import com.gauravbajaj.newsapp.utils.CustomTabsHelper
 import dagger.hilt.android.AndroidEntryPoint
@@ -111,25 +108,15 @@ fun SearchScreen(
 
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text(stringResource(R.string.search_news)) },
-                navigationIcon = {
-                    IconButton(onClick = {
-                        (context as? ComponentActivity)?.onBackPressed()
-                    }) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Navigate Up"
-                        )
-                    }
+            CommonTopBar(
+                text = stringResource(R.string.search_news),
+                onBackClick = {
+                    (context as? ComponentActivity)?.onBackPressed()
                 },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
-                )
+                theme = MaterialTheme,
             )
         }
+
     ) { padding ->
         Column(
             modifier = Modifier
@@ -155,12 +142,7 @@ fun SearchScreen(
             // Content based on state
             when (val state = uiState) {
                 is UiSearchState.Loading -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
-                    }
+                    LoadingIndicator(padding)
                 }
 
                 is UiSearchState.Success -> {
@@ -175,9 +157,8 @@ fun SearchScreen(
                         )
                     }
                 }
-
                 is UiSearchState.Error -> {
-                    ErrorState(
+                    ErrorAndRetryState(
                         message = state.message ?: context.getString(R.string.error_loading_news),
                         onRetry = {
                             viewModel.setSearchQuery(searchQuery)
@@ -383,32 +364,6 @@ private fun InitialSearchHint() {
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-    }
-}
-
-@Composable
-private fun ErrorState(
-    message: String,
-    onRetry: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = message,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.error,
-            textAlign = TextAlign.Center
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = onRetry) {
-            Text(stringResource(R.string.retry))
-        }
     }
 }
 
