@@ -63,6 +63,7 @@
     <string name="error_search_failed">Failed to perform search. Please try again.</string>
     <string name="error_generic">An error occurred</string>
     <string name="error_loading_languages">Error loading languages</string>
+    <string name="error_loading_content">Error loading content</string>
 
     
     <!-- Language Selection -->

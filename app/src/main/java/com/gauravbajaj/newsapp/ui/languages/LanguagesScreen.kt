@@ -16,7 +16,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -27,9 +26,7 @@ import androidx.compose.ui.unit.dp
 import com.gauravbajaj.newsapp.R
 import com.gauravbajaj.newsapp.data.model.Language
 import com.gauravbajaj.newsapp.ui.base.UiState
-import com.gauravbajaj.newsapp.ui.components.LoadingIndicator
-import com.gauravbajaj.newsapp.ui.components.CommonTopBar
-import com.gauravbajaj.newsapp.ui.components.ErrorAndRetryState
+import com.gauravbajaj.newsapp.ui.components.CommonNetworkScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,54 +37,32 @@ internal fun LanguagesScreen(
     onLanguageSelected: (String) -> Unit,
     onDoneClicked: () -> Unit
 ) {
-
-    Scaffold(
-        topBar = {
-            CommonTopBar(
-                text = stringResource(id = R.string.select_language),
-                onBackClick = onBackPressed,
-                actions = {
-                    if (selectedLanguages.isNotEmpty()) {
-                        TextButton(
-                            onClick = onDoneClicked
-                        ) {
-                            Text(
-                                text = stringResource(id = R.string.action_done),
-                                color = MaterialTheme.colorScheme.onPrimary
-                            )
-                        }
-                    }
-                }, theme = MaterialTheme
+    CommonNetworkScreen(
+        title = stringResource(id = R.string.select_language),
+        onBackPressed = onBackPressed,
+        uiState = uiState,
+        actions = {
+            if (selectedLanguages.isNotEmpty()) {
+                TextButton(
+                    onClick = onDoneClicked
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.action_done),
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+            }
+        },
+        onSuccess = { state, modifier ->
+            LanguagesContent(
+                languages = (uiState as UiState.Success).data ?: emptyList(),
+                selectedLanguages = selectedLanguages,
+                onLanguageSelected = onLanguageSelected,
+                modifier = modifier
             )
-        }
-    ) { padding ->
-
-        when (val state = uiState) {
-            is UiState.Success -> {
-                LanguagesContent(
-                    languages = state.data ?: emptyList(),
-                    selectedLanguages = selectedLanguages,
-                    onLanguageSelected = onLanguageSelected,
-                    modifier = Modifier.padding(padding)
-                )
-            }
-
-            is UiState.Loading -> {
-                LoadingIndicator(padding)
-            }
-
-            is UiState.Error -> {
-                ErrorAndRetryState(
-                    message = state.message
-                        ?: stringResource(id = R.string.error_loading_languages),
-                    onRetry = { /* Handle retry if needed */ },
-                    modifier = Modifier.padding(padding)
-                )
-            }
-
-            else -> {}
-        }
-    }
+        },
+        theme = MaterialTheme,
+    ) 
 }
 
 @Composable

@@ -22,7 +22,7 @@ class NewsListViewModel @Inject constructor(
     @BackgroundContext private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<UiState<List<Article>>>(UiState.Loading)
+    private val _uiState = MutableStateFlow<UiState<List<Article>>>(UiState.Initial)
     val uiState: StateFlow<UiState<List<Article>>> = _uiState
 
     private var currentSource: String? = null

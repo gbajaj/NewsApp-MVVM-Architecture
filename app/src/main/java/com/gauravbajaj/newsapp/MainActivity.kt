@@ -55,7 +55,6 @@ fun MainScreen() {
         topBar = {
             CommonTopBar(
                 text = LocalContext.current.resources.getString(R.string.app_name),
-                onBackClick = {},
                 theme = MaterialTheme
             )
         }

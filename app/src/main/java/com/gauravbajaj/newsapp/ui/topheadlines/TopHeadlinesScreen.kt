@@ -1,10 +1,8 @@
 package com.gauravbajaj.newsapp.ui.topheadlines
 
-import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,13 +14,11 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -31,71 +27,44 @@ import coil.compose.rememberAsyncImagePainter
 import com.gauravbajaj.newsapp.R
 import com.gauravbajaj.newsapp.data.model.Article
 import com.gauravbajaj.newsapp.ui.base.UiState
-import com.gauravbajaj.newsapp.ui.components.LoadingIndicator
-import com.gauravbajaj.newsapp.ui.components.CommonTopBar
-import com.gauravbajaj.newsapp.ui.components.ErrorAndRetryState
+import com.gauravbajaj.newsapp.ui.components.CommonNetworkScreen
+import com.gauravbajaj.newsapp.ui.components.EmptyState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun TopHeadlinesScreen(
-    onBackPressed: () -> Unit,
+    onBackPressed: (() -> Unit)? = null,
     uiState: UiState<List<Article>>,
     loadTopHeadlines: () -> Unit,
     onArticleClick: (String) -> Unit
 ) {
-    val context = LocalContext.current
-    Scaffold(
-        topBar = {
-            CommonTopBar(
-                text = stringResource(R.string.top_headlines),
-                onBackClick = { (context as? ComponentActivity)?.onBackPressed() },
-                theme = MaterialTheme,
-            )
-        }
-    ) { padding ->
-        TopHeadlinesContent(
-            uiState = uiState,
-            padding = padding,
-            onRetry = loadTopHeadlines,
-            onArticleClick = onArticleClick,
-        )
-    }
-}
-
-@Composable
-fun TopHeadlinesContent(
-    uiState: UiState<List<Article>>,
-    padding: PaddingValues,
-    onRetry: () -> Unit,
-    onArticleClick: (String) -> Unit,
-) {
-    val context = LocalContext.current
-
-    when (uiState) {
-        is UiState.Success -> {
-            ArticleList(
-                articles = uiState.data,
-                modifier = Modifier.padding(padding),
-                onArticleClick = { article ->
-                    onArticleClick(article.url)
+    CommonNetworkScreen(
+        title = stringResource(id = R.string.select_language),
+        onBackPressed = onBackPressed,
+        uiState = uiState,
+        onRetry = loadTopHeadlines,
+        onSuccess = { state, modifier ->
+            val uiState = state as UiState.Success
+            val data = uiState.data as List<Article>
+            uiState.data.let { sources ->
+                if (sources.isNotEmpty()) {
+                    ArticleList(
+                        articles = uiState.data,
+                        modifier = modifier,
+                        onArticleClick = { article ->
+                            onArticleClick(article.url)
+                        }
+                    )
+                } else {
+                    EmptyState(
+                        message = stringResource(id = R.string.no_sources_found),
+                        modifier = modifier
+                    )
                 }
-            )
-        }
-
-        is UiState.Loading -> {
-            LoadingIndicator(padding)
-        }
-
-        is UiState.Error -> {
-            ErrorAndRetryState(
-                message = uiState.message ?: context.getString(R.string.error_loading_news),
-                onRetry = onRetry,
-                modifier = Modifier.padding(padding)
-            )
-        }
-
-        else -> {}
-    }
+            }
+        },
+        theme = MaterialTheme,
+    )
 }
 
 

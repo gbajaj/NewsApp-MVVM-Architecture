@@ -54,7 +54,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.gauravbajaj.newsapp.R
 import com.gauravbajaj.newsapp.data.model.Article
-import com.gauravbajaj.newsapp.ui.base.UiSearchState
+import com.gauravbajaj.newsapp.ui.base.UiState
 import com.gauravbajaj.newsapp.ui.components.LoadingIndicator
 import com.gauravbajaj.newsapp.ui.components.CommonTopBar
 import com.gauravbajaj.newsapp.ui.components.ErrorAndRetryState
@@ -141,11 +141,11 @@ fun SearchScreen(
 
             // Content based on state
             when (val state = uiState) {
-                is UiSearchState.Loading -> {
-                    LoadingIndicator(padding)
+                is UiState.Loading -> {
+                    LoadingIndicator(Modifier.padding(padding))
                 }
 
-                is UiSearchState.Success -> {
+                is UiState.Success -> {
                     if (state.data.isEmpty()) {
                         EmptySearchResults()
                     } else {
@@ -157,7 +157,7 @@ fun SearchScreen(
                         )
                     }
                 }
-                is UiSearchState.Error -> {
+                is UiState.Error -> {
                     ErrorAndRetryState(
                         message = state.message ?: context.getString(R.string.error_loading_news),
                         onRetry = {
@@ -166,7 +166,7 @@ fun SearchScreen(
                     )
                 }
 
-                is UiSearchState.Empty -> {
+                is UiState.Initial -> {
                     // Initial empty state with search hint
                     InitialSearchHint()
                 }

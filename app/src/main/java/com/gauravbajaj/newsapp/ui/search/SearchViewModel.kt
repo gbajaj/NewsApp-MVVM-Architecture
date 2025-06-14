@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.gauravbajaj.newsapp.data.model.Article
 import com.gauravbajaj.newsapp.data.repository.SearchRepository
 import com.gauravbajaj.newsapp.di.BackgroundContext
-import com.gauravbajaj.newsapp.ui.base.UiSearchState
+import com.gauravbajaj.newsapp.ui.base.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -52,14 +52,14 @@ class SearchViewModel @Inject constructor(
     @BackgroundContext private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<UiSearchState<List<Article>>>(UiSearchState.Empty)
+    private val _uiState = MutableStateFlow<UiState<List<Article>>>(UiState.Initial)
 
     /**
      * A [StateFlow] representing the current state of the UI.
-     * It emits [UiSearchState] objects that encapsulate the different states of the search screen,
+     * It emits [UiState] objects that encapsulate the different states of the search screen,
      * such as loading, success with a list of articles, error, or empty state.
      */
-    val uiState: StateFlow<UiSearchState<List<Article>>> = _uiState
+    val uiState: StateFlow<UiState<List<Article>>> = _uiState
 
     /**
      * Represents the current search query as a StateFlow.
@@ -111,14 +111,11 @@ class SearchViewModel @Inject constructor(
                     createSearchQueryFlow()
                 }
                 _uiState.value =
-                    UiSearchState.Error(e.message ?: "An unknown error occurred in repository")
+                    UiState.Error(e.message ?: "An unknown error occurred in repository")
             }
             .onEach { articles -> // Process the emitted articles
-                _uiState.value = if (articles.isNotEmpty()) {
-                    UiSearchState.Success(articles)
-                } else {
-                    UiSearchState.Empty // Or Error("No articles found") depending on desired behavior
-                }
+                _uiState.value =
+                    UiState.Success(articles)
             }
             .launchIn(viewModelScope)
     }
@@ -133,7 +130,7 @@ class SearchViewModel @Inject constructor(
      * @return A Flow emitting a list of Article objects.
      */
     private fun searchNewsFlow(query: String): Flow<List<Article>> {
-        _uiState.value = UiSearchState.Loading // Set loading state before starting the flow
+        _uiState.value = UiState.Loading // Set loading state before starting the flow
         return searchRepository.searchNews(query = query).flowOn(dispatcher)
     }
 

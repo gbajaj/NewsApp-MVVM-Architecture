@@ -23,11 +23,9 @@ import androidx.compose.ui.platform.testTag
  *         a UI component as a side effect.
  */
 @Composable
-fun LoadingIndicator(padding: PaddingValues) {
+fun LoadingIndicator(modifier: Modifier) {
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(padding),
+        modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator(modifier = Modifier.testTag("loading_indicator"))

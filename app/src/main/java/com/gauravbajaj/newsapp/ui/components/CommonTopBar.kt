@@ -38,8 +38,8 @@ import com.gauravbajaj.newsapp.R
 @Composable
 fun CommonTopBar(
     text: String,
-    onBackClick: (() -> Unit),
     actions: @Composable RowScope.() -> Unit = {},
+    onBackClick: (() -> Unit)? = null,
     theme: MaterialTheme = MaterialTheme
 ) {
 
@@ -59,13 +59,17 @@ fun CommonTopBar(
             actionIconContentColor = theme.colorScheme.onPrimary,
             navigationIconContentColor = theme.colorScheme.onPrimary
         ),
-        navigationIcon = {
-            IconButton(onClick = onBackClick) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = stringResource(id = R.string.navigate_back_button_desc)
-                )
+        navigationIcon = if (onBackClick != null) {
+            {
+                IconButton(onClick = onBackClick) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = stringResource(id = R.string.navigate_back_button_desc)
+                    )
+                }
             }
+        } else {
+            {}
         },
         actions = actions
     )

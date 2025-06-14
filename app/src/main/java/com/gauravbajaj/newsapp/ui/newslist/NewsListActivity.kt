@@ -5,9 +5,9 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -20,18 +20,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -48,10 +43,8 @@ import com.gauravbajaj.newsapp.R
 import com.gauravbajaj.newsapp.data.model.Article
 import com.gauravbajaj.newsapp.data.model.Source
 import com.gauravbajaj.newsapp.ui.base.UiState
-import com.gauravbajaj.newsapp.ui.components.LoadingIndicator
-import com.gauravbajaj.newsapp.ui.components.CommonTopBar
+import com.gauravbajaj.newsapp.ui.components.CommonNetworkScreen
 import com.gauravbajaj.newsapp.ui.components.EmptyState
-import com.gauravbajaj.newsapp.ui.components.ErrorAndRetryState
 import com.gauravbajaj.newsapp.ui.theme.NewsAppTheme
 import com.gauravbajaj.newsapp.utils.CustomTabsHelper
 import com.gauravbajaj.newsapp.utils.formatDate
@@ -59,6 +52,8 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class NewsListActivity : ComponentActivity() {
+    private val viewModel by viewModels<NewsListViewModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -72,7 +67,14 @@ class NewsListActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+                    // Initial load
+                    LaunchedEffect(Unit) {
+                        viewModel.loadNews(source, country, language)
+                    }
                     NewsListScreen(
+                        uiState = uiState,
                         source = source,
                         country = country,
                         language = language,
@@ -104,74 +106,45 @@ class NewsListActivity : ComponentActivity() {
     }
 }
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewsListScreen(
     viewModel: NewsListViewModel = hiltViewModel(),
+    uiState: UiState<List<Article>>,
     source: String?,
     country: String?,
     language: String?,
     onBackClick: () -> Unit
 ) {
     val context = LocalContext.current
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-    // Initial load
-    LaunchedEffect(Unit) {
-        viewModel.loadNews(source, country, language)
-    }
-
-    // Handle error states
-    val errorMessage = remember { mutableStateOf<String?>(null) }
-    LaunchedEffect(uiState) {
-        if (uiState is UiState.Error) {
-            errorMessage.value = (uiState as UiState.Error).message
-        }
-    }
-
-    errorMessage.value?.let { message ->
-        LaunchedEffect(message) {
-            errorMessage.value = null
-        }
-    }
-    Scaffold(
-        topBar = {
-            CommonTopBar(
-                text = "News",
-                onBackClick = onBackClick, theme = MaterialTheme,
-            )
-        }
-    ) { padding ->
-        when (val state = uiState) {
-            is UiState.Loading -> {
-                LoadingIndicator(padding)
-            }
-            is UiState.Success -> {
-                if (state.data.isEmpty()) {
-                    EmptyState(
-                        message = stringResource(R.string.no_results_found),
-                        modifier = Modifier.padding(padding)
-                    )
-                } else {
+    CommonNetworkScreen(
+        title = stringResource(id = R.string.news_sources),
+        onBackPressed = onBackClick,
+        uiState = uiState,
+        onRetry = { viewModel.loadNews(source, country, language) },
+        onSuccess = { state, modifier ->
+            val uiState = state as UiState.Success
+            val data = uiState.data as List<Article>
+            data.let { sources ->
+                if (sources.isNotEmpty()) {
                     NewsList(
-                        articles = state.data,
+                        articles = sources,
                         onArticleClick = { article ->
                             CustomTabsHelper.launchUrl(context, article.url)
                         },
-                        modifier = Modifier.padding(padding)
+                        modifier = modifier
+                    )
+                } else {
+                    EmptyState(
+                        message = stringResource(id = R.string.no_sources_found),
+                        modifier = modifier
                     )
                 }
             }
-            is UiState.Error -> {
-                ErrorAndRetryState(
-                    message = state.message ?: stringResource(R.string.error_generic),
-                    onRetry = { viewModel.loadNews(source, country, language) },
-                    modifier = Modifier.padding(padding)
-                )
-            }
-            else -> {}
-        }
-    }
+        },
+        theme = MaterialTheme,
+    )
 }
 
 @Composable
