@@ -16,6 +16,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -23,6 +25,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.rememberAsyncImagePainter
 import com.gauravbajaj.newsapp.R
 import com.gauravbajaj.newsapp.data.model.Article
@@ -34,15 +38,20 @@ import com.gauravbajaj.newsapp.ui.components.EmptyState
 @Composable
 internal fun TopHeadlinesScreen(
     onBackPressed: (() -> Unit)? = null,
-    uiState: UiState<List<Article>>,
-    loadTopHeadlines: () -> Unit,
-    onArticleClick: (String) -> Unit
+    onArticleClick: (String) -> Unit,
+    viewModel: TopHeadlineViewModel = hiltViewModel(),
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    LaunchedEffect(uiState) {
+        if (uiState is UiState.Initial) {
+            viewModel.loadTopHeadlines()
+        }
+    }
     CommonNetworkScreen(
         title = stringResource(id = R.string.select_language),
         onBackPressed = onBackPressed,
         uiState = uiState,
-        onRetry = loadTopHeadlines,
+        onRetry = { viewModel.loadTopHeadlines() },
         onSuccess = { state, modifier ->
             val uiState = state as UiState.Success
             val data = uiState.data as List<Article>

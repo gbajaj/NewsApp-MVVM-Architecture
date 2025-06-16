@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,7 +24,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,8 +50,6 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class NewsListActivity : ComponentActivity() {
-    private val viewModel by viewModels<NewsListViewModel>()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -67,14 +63,7 @@ class NewsListActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-                    // Initial load
-                    LaunchedEffect(Unit) {
-                        viewModel.loadNews(source, country, language)
-                    }
                     NewsListScreen(
-                        uiState = uiState,
                         source = source,
                         country = country,
                         language = language,
@@ -110,18 +99,18 @@ class NewsListActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewsListScreen(
-    viewModel: NewsListViewModel = hiltViewModel(),
-    uiState: UiState<List<Article>>,
     source: String?,
     country: String?,
     language: String?,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    viewModel: NewsListViewModel = hiltViewModel(),
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     CommonNetworkScreen(
         title = stringResource(id = R.string.news_sources),
         onBackPressed = onBackClick,
-        uiState = uiState,
+        uiState = uiState as UiState<Any>,
         onRetry = { viewModel.loadNews(source, country, language) },
         onSuccess = { state, modifier ->
             val uiState = state as UiState.Success

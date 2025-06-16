@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@+id/topHeadlinesRoute">
+
+    <navigation
+        android:id="@+id/topHeadlinesRoute"
+        android:name="com.gauravbajaj.newsapp.ui.topheadlines.TopHeadlinesScreen"
+        android:label="Top Headlines" />
+
+    <navigation
+        android:id="@+id/newsSourcesRoute"
+        android:name="com.gauravbajaj.newsapp.ui.news_sources.NewsSourcesScreen"
+        android:label="News Sources" />
+
+    <navigation
+        android:id="@+id/countrySourcesRoute"
+        android:name="com.gauravbajaj.newsapp.ui.country_sources.CountrySourcesScreen"
+        android:label="Country Sources" />
+
+    <navigation
+        android:id="@+id/languagesRoute"
+        android:name="com.gauravbajaj.newsapp.ui.languages.LanguagesScreen"
+        android:label="Languages" />
+
+    <navigation
+        android:id="@+id/searchRoute"
+        android:name="com.gauravbajaj.newsapp.ui.search.SearchScreen"
+        android:label="Search" />
+
+</navigation>

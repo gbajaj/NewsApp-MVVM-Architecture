@@ -19,12 +19,12 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class NewsSourcesActivity : ComponentActivity() {
     private val viewModel: NewsSourcesViewModel by viewModels()
-    
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             val uiState by viewModel.newsSources.collectAsStateWithLifecycle()
-            
+
             NewsAppTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -37,7 +37,6 @@ class NewsSourcesActivity : ComponentActivity() {
                     }
                     NewsSourcesScreen(
                         onBackPressed = { onBackPressed() },
-                        uiState = uiState,
                         loadNewsSources = { viewModel.loadNewsSources() },
                         onSourceClick = { sourceId ->
                             NewsListActivity.start(this@NewsSourcesActivity, source = sourceId)

@@ -19,10 +19,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gauravbajaj.newsapp.R
 import com.gauravbajaj.newsapp.data.model.Language
 import com.gauravbajaj.newsapp.ui.base.UiState
@@ -32,15 +36,22 @@ import com.gauravbajaj.newsapp.ui.components.CommonNetworkScreen
 @Composable
 internal fun LanguagesScreen(
     onBackPressed: () -> Unit,
-    uiState: UiState<List<Language>>,
     selectedLanguages: List<String>,
     onLanguageSelected: (String) -> Unit,
-    onDoneClicked: () -> Unit
+    onDoneClicked: () -> Unit,
+    viewModel: LanguagesViewModel = hiltViewModel()
 ) {
+
+    val uiState by viewModel.languages.collectAsStateWithLifecycle()
+    LaunchedEffect(uiState) {
+        if (uiState is UiState.Initial) {
+            viewModel.loadLanguages()
+        }
+    }
     CommonNetworkScreen(
         title = stringResource(id = R.string.select_language),
         onBackPressed = onBackPressed,
-        uiState = uiState,
+        uiState = uiState as UiState<Any>,
         actions = {
             if (selectedLanguages.isNotEmpty()) {
                 TextButton(
@@ -54,15 +65,17 @@ internal fun LanguagesScreen(
             }
         },
         onSuccess = { state, modifier ->
+            val uiState = state as UiState.Success
+            val data = uiState.data as List<Language>
             LanguagesContent(
-                languages = (uiState as UiState.Success).data ?: emptyList(),
+                languages = data ?: emptyList(),
                 selectedLanguages = selectedLanguages,
                 onLanguageSelected = onLanguageSelected,
                 modifier = modifier
             )
         },
         theme = MaterialTheme,
-    ) 
+    )
 }
 
 @Composable

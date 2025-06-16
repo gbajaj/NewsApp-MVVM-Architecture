@@ -15,26 +15,24 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gauravbajaj.newsapp.R
 import com.gauravbajaj.newsapp.data.model.Source
 import com.gauravbajaj.newsapp.ui.base.UiState
 import com.gauravbajaj.newsapp.ui.components.CommonNetworkScreen
-import com.gauravbajaj.newsapp.ui.components.LoadingIndicator
-
 import com.gauravbajaj.newsapp.ui.components.EmptyState
-import com.gauravbajaj.newsapp.ui.components.ErrorAndRetryState
-
 import com.gauravbajaj.newsapp.ui.theme.NewsAppTheme
 
 
@@ -42,14 +40,21 @@ import com.gauravbajaj.newsapp.ui.theme.NewsAppTheme
 @Composable
 internal fun NewsSourcesScreen(
     onBackPressed: () -> Unit,
-    uiState: UiState<List<Source>>,
     loadNewsSources: () -> Unit,
-    onSourceClick: (String) -> Unit
+    onSourceClick: (String) -> Unit,
+    viewModel: NewsSourcesViewModel = hiltViewModel()
 ) {
+
+    val uiState by viewModel.newsSources.collectAsStateWithLifecycle()
+    LaunchedEffect(uiState) {
+        if (uiState is UiState.Initial) {
+            viewModel.loadNewsSources()
+        }
+    }
     CommonNetworkScreen(
         title = stringResource(id = R.string.news_sources),
         onBackPressed = onBackPressed,
-        uiState = uiState,
+        uiState = uiState as UiState<Any>,
         onRetry = { loadNewsSources() },
         onSuccess = { state, modifier ->
             val uiState = state as UiState.Success

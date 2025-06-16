@@ -22,7 +22,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,6 +29,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gauravbajaj.newsapp.R
 import com.gauravbajaj.newsapp.data.model.Country
 import com.gauravbajaj.newsapp.ui.base.UiState
@@ -48,8 +49,6 @@ import dagger.hilt.android.AndroidEntryPoint
  */
 @AndroidEntryPoint
 class CountrySourcesActivity : ComponentActivity() {
-    private val viewModel: CountrySourcesViewModel by viewModels()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -67,7 +66,6 @@ class CountrySourcesActivity : ComponentActivity() {
                                 country = country.code.lowercase()
                             )
                         },
-                        viewModel = viewModel
                     )
                 }
             }
@@ -80,11 +78,13 @@ class CountrySourcesActivity : ComponentActivity() {
 private fun CountrySourcesScreen(
     onBackClick: () -> Unit,
     onCountryClick: (Country) -> Unit,
-    viewModel: CountrySourcesViewModel
+    viewModel: CountrySourcesViewModel = hiltViewModel()
 ) {
-    val countriesState by viewModel.countries.collectAsState()
-    LaunchedEffect(Unit) {
-        viewModel.loadCountries()
+    val uiState by viewModel.countries.collectAsStateWithLifecycle()
+    LaunchedEffect(uiState) {
+        if (uiState is UiState.Initial) {
+            viewModel.loadCountries()
+        }
     }
 
     Scaffold(
@@ -96,15 +96,19 @@ private fun CountrySourcesScreen(
             )
         }
     ) { padding ->
-        when (val state = countriesState) {
+
+        when (uiState) {
             is UiState.Loading -> {
                 LoadingIndicator(Modifier.padding(padding))
             }
+
             is UiState.Success -> {
-                val countries = state.data ?: emptyList()
+                val countries = (uiState as UiState.Success).data
                 if (countries.isEmpty()) {
-                    EmptyState(message = stringResource(R.string.no_countries_available),
-                        modifier = Modifier.padding(padding))
+                    EmptyState(
+                        message = stringResource(R.string.no_countries_available),
+                        modifier = Modifier.padding(padding)
+                    )
                 } else {
                     CountryList(
                         countries = countries,
@@ -113,13 +117,16 @@ private fun CountrySourcesScreen(
                     )
                 }
             }
+
             is UiState.Error -> {
                 ErrorAndRetryState(
-                    message = state.message ?: stringResource(R.string.error_loading_countries),
+                    message = (uiState as UiState.Error).message
+                        ?: stringResource(R.string.error_loading_countries),
                     onRetry = { viewModel.loadCountries() },
                     modifier = Modifier.padding(padding)
                 )
             }
+
             else -> {}
         }
     }

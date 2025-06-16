@@ -55,9 +55,9 @@ import coil.compose.AsyncImage
 import com.gauravbajaj.newsapp.R
 import com.gauravbajaj.newsapp.data.model.Article
 import com.gauravbajaj.newsapp.ui.base.UiState
-import com.gauravbajaj.newsapp.ui.components.LoadingIndicator
 import com.gauravbajaj.newsapp.ui.components.CommonTopBar
 import com.gauravbajaj.newsapp.ui.components.ErrorAndRetryState
+import com.gauravbajaj.newsapp.ui.components.LoadingIndicator
 import com.gauravbajaj.newsapp.ui.theme.NewsAppTheme
 import com.gauravbajaj.newsapp.utils.CustomTabsHelper
 import dagger.hilt.android.AndroidEntryPoint
@@ -157,6 +157,7 @@ fun SearchScreen(
                         )
                     }
                 }
+
                 is UiState.Error -> {
                     ErrorAndRetryState(
                         message = state.message ?: context.getString(R.string.error_loading_news),

@@ -26,7 +26,7 @@ class CountrySourcesViewModel @Inject constructor(
 ) :
     ViewModel() {
 
-    private val _countries = MutableStateFlow<UiState<List<Country>>>(UiState.Loading)
+    private val _countries = MutableStateFlow<UiState<List<Country>>>(UiState.Initial)
     val countries: StateFlow<UiState<List<Country>>> = _countries
 
     init {
