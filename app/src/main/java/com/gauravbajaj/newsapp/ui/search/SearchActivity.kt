@@ -62,35 +62,29 @@ import com.gauravbajaj.newsapp.ui.theme.NewsAppTheme
 import com.gauravbajaj.newsapp.utils.CustomTabsHelper
 import dagger.hilt.android.AndroidEntryPoint
 
+
 /**
- * The SearchActivity provides a search interface for finding news articles using Jetpack Compose.
+ * Composable function for the search screen.
+ * It allows users to search for news articles and displays the results.
  *
- * This activity allows users to:
- * - Enter search queries in a search bar
- * - View search results in a scrollable list
- * - See loading states and error messages
- * - Navigate back to the previous screen
+ * This screen includes:
+ * - A top bar with a back button and the title "Search News".
+ * - A search bar that allows users to input their search query. The search bar automatically
+ *   requests focus when the screen is first displayed.
+ * - A content area that displays different states based on the search operation:
+ *     - [UiState.Loading]: Shows a loading indicator while fetching results.
+ *     - [UiState.Success]:
+ *         - If results are empty, displays an [EmptySearchResults] message.
+ *         - Otherwise, displays a list of [SearchResults]. Clicking an article
+ *           opens it in a custom tab.
+ *     - [UiState.Error]: Shows an [ErrorAndRetryState] with an error message and a retry button.
+ *     - [UiState.Initial]: Shows an [InitialSearchHint] prompting the user to start searching.
  *
- * It observes the [SearchViewModel] for state changes and updates the UI accordingly.
+ * The search query is managed by the [SearchViewModel] and updates reactively.
+ *
+ * @param viewModel The [SearchViewModel] instance used to manage the state and logic of the search screen.
+ *                  It is provided by Hilt.
  */
-@AndroidEntryPoint
-class SearchActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            NewsAppTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    SearchScreen()
-                }
-            }
-        }
-    }
-}
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(

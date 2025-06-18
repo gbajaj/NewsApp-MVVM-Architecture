@@ -47,15 +47,15 @@ fun CommonNetworkScreen(
     ) { padding ->
         when (uiState) {
             is UiState.Initial -> {
-                onInitial(Modifier.padding(padding))
+                onInitial(modifier = Modifier.padding(padding))
             }
 
             is UiState.Success -> {
-                onSuccess(uiState, Modifier.padding(padding))
+                onSuccess(uiState, modifier = Modifier.padding(padding))
             }
 
             is UiState.Loading -> {
-                LoadingIndicator(Modifier.padding(padding))
+                LoadingIndicator(modifier = Modifier.padding(padding))
             }
 
             is UiState.Error -> {
@@ -63,7 +63,7 @@ fun CommonNetworkScreen(
                     message = (uiState as UiState.Error).message
                         ?: stringResource(id = R.string.error_loading_content),
                     onRetry = onRetry,
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier.padding(padding)
                 )
             }
 

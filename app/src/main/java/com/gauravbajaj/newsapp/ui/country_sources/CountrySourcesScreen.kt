@@ -3,7 +3,6 @@ package com.gauravbajaj.newsapp.ui.country_sources
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -47,35 +46,35 @@ import dagger.hilt.android.AndroidEntryPoint
  *
  * @author Gaurav Bajaj
  */
-@AndroidEntryPoint
-class CountrySourcesActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            NewsAppTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    CountrySourcesScreen(
-                        onBackClick = { onBackPressed() },
-                        onCountryClick = { country ->
-                            // Open NewsListActivity with the selected country
-                            NewsListActivity.start(
-                                this@CountrySourcesActivity,
-                                country = country.code.lowercase()
-                            )
-                        },
-                    )
-                }
-            }
-        }
-    }
-}
+//@AndroidEntryPoint
+//class CountrySourcesActivity : ComponentActivity() {
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        setContent {
+//            NewsAppTheme {
+//                Surface(
+//                    modifier = Modifier.fillMaxSize(),
+//                    color = MaterialTheme.colorScheme.background
+//                ) {
+//                    CountrySourcesScreen(
+//                        onBackClick = { onBackPressed() },
+//                        onCountryClick = { country ->
+//                            // Open NewsListActivity with the selected country
+//                            NewsListActivity.start(
+//                                this@CountrySourcesActivity,
+//                                country = country.code.lowercase()
+//                            )
+//                        },
+//                    )
+//                }
+//            }
+//        }
+//    }
+//}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun CountrySourcesScreen(
+fun CountrySourcesScreen(
     onBackClick: () -> Unit,
     onCountryClick: (Country) -> Unit,
     viewModel: CountrySourcesViewModel = hiltViewModel()

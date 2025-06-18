@@ -40,7 +40,6 @@ import com.gauravbajaj.newsapp.ui.theme.NewsAppTheme
 @Composable
 internal fun NewsSourcesScreen(
     onBackPressed: () -> Unit,
-    loadNewsSources: () -> Unit,
     onSourceClick: (String) -> Unit,
     viewModel: NewsSourcesViewModel = hiltViewModel()
 ) {
@@ -55,7 +54,7 @@ internal fun NewsSourcesScreen(
         title = stringResource(id = R.string.news_sources),
         onBackPressed = onBackPressed,
         uiState = uiState as UiState<Any>,
-        onRetry = { loadNewsSources() },
+        onRetry = { viewModel.loadNewsSources() },
         onSuccess = { state, modifier ->
             val uiState = state as UiState.Success
             val data = uiState.data as List<Source>

@@ -48,7 +48,7 @@ internal fun TopHeadlinesScreen(
         }
     }
     CommonNetworkScreen(
-        title = stringResource(id = R.string.select_language),
+        title = stringResource(id = R.string.top_headlines),
         onBackPressed = onBackPressed,
         uiState = uiState,
         onRetry = { viewModel.loadTopHeadlines() },
@@ -86,7 +86,8 @@ fun ArticleList(
     LazyColumn(
         modifier = modifier
             .fillMaxWidth()
-            .padding(16.dp),
+//            .padding(16.dp)
+        ,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         items(articles, key = { it.url }) { article ->

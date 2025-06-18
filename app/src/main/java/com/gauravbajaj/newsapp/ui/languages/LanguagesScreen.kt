@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -21,6 +22,10 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -36,13 +41,12 @@ import com.gauravbajaj.newsapp.ui.components.CommonNetworkScreen
 @Composable
 internal fun LanguagesScreen(
     onBackPressed: () -> Unit,
-    selectedLanguages: List<String>,
-    onLanguageSelected: (String) -> Unit,
-    onDoneClicked: () -> Unit,
+    onDoneClicked: (String) -> Unit,
     viewModel: LanguagesViewModel = hiltViewModel()
 ) {
-
+    var selectedLanguages by remember { mutableStateOf(emptyList<String>()) }
     val uiState by viewModel.languages.collectAsStateWithLifecycle()
+
     LaunchedEffect(uiState) {
         if (uiState is UiState.Initial) {
             viewModel.loadLanguages()
@@ -55,7 +59,9 @@ internal fun LanguagesScreen(
         actions = {
             if (selectedLanguages.isNotEmpty()) {
                 TextButton(
-                    onClick = onDoneClicked
+                    onClick = {
+                        onDoneClicked(selectedLanguages.joinToString(","))
+                    }
                 ) {
                     Text(
                         text = stringResource(id = R.string.action_done),
@@ -70,7 +76,17 @@ internal fun LanguagesScreen(
             LanguagesContent(
                 languages = data ?: emptyList(),
                 selectedLanguages = selectedLanguages,
-                onLanguageSelected = onLanguageSelected,
+                onLanguageSelected = {
+                    selectedLanguages = if (it in selectedLanguages) {
+                        selectedLanguages - it
+                    } else {
+                        if (selectedLanguages.size < 2) {
+                            selectedLanguages + it
+                        } else {
+                            selectedLanguages
+                        }
+                    }
+                },
                 modifier = modifier
             )
         },

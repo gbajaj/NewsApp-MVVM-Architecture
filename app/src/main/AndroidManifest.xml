@@ -28,31 +28,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity
-            android:name=".ui.topheadlines.TopHeadlineActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".ui.news_sources.NewsSourcesActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".ui.country_sources.CountrySourcesActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.languages.LanguagesActivity"
-            android:exported="false" />
-            
-        <activity
-            android:name=".ui.search.SearchActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-            
-        <activity
-            android:name=".ui.newslist.NewsListActivity"
-            android:exported="false" />
-
     </application>
 
 </manifest>

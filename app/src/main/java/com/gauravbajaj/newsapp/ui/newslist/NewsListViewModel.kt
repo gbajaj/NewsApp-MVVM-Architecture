@@ -32,46 +32,44 @@ class NewsListViewModel @Inject constructor(
     fun loadNews(source: String? = null, country: String? = null, language: String? = null) {
         currentSource = source ?: currentSource
         currentCountry = country ?: currentCountry
-        
-        val languages = language?.split(",")?.map { it.trim() }?.filter { it.isNotBlank() }?.take(2) ?: emptyList()
+
+        val languages = language?.split(",")?.map { it.trim() }?.filter { it.isNotBlank() }?.take(2)
+            ?: emptyList()
         currentLanguage = languages.firstOrNull()
-        
+
         viewModelScope.launch {
             _uiState.value = UiState.Loading
-                val articles = if (languages.size >= 2) {
-                    // If we have exactly 2 languages, fetch news for both and combine the results
-                    val firstLangNews = repository.getNews(
-                        source = currentSource,
-                        country = currentCountry,
-                        language = languages[0]
-                    )
-                    val secondLangNews = repository.getNews(
-                        source = currentSource,
-                        country = currentCountry,
-                        language = languages[1]
-                    )
-                    // Combine and remove duplicates based on article URL
-                    firstLangNews.zip ( secondLangNews ) { first, second ->
+            val articles = if (languages.size >= 2) {
+                // If we have exactly 2 languages, fetch news for both and combine the results
+                val firstLangNews = repository.getNews(
+                    source = currentSource,
+                    country = currentCountry,
+                    language = languages[0]
+                )
+                val secondLangNews = repository.getNews(
+                    source = currentSource,
+                    country = currentCountry,
+                    language = languages[1]
+                )
+                // Combine and remove duplicates based on article URL
+                firstLangNews.zip(secondLangNews) { first, second ->
 
-                        return@zip  (first + second).distinctBy { it.url }.sortedByDescending { it.publishedAt }
-                    }.flowOn(dispatcher)
-                } else {
-                    // Single language or no language specified
-                    repository.getNews(
-                        source = currentSource,
-                        country = currentCountry,
-                        language = currentLanguage
-                    ).flowOn(dispatcher)
-                }.catch { e ->
-                    _uiState.value = UiState.Error(e.message ?: "An unknown error occurred")
-                }
-                    .collect { articles ->
+                    return@zip (first + second).distinctBy { it.url }
+                        .sortedByDescending { it.publishedAt }
+                }.flowOn(dispatcher)
+            } else {
+                // Single language or no language specified
+                repository.getNews(
+                    source = currentSource,
+                    country = currentCountry,
+                    language = currentLanguage
+                ).flowOn(dispatcher)
+            }.catch { e ->
+                _uiState.value = UiState.Error(e.message ?: "An unknown error occurred")
+            }
+                .collect { articles ->
                     _uiState.value = UiState.Success(articles)
                 }
         }
-    }
-
-    fun refresh() {
-        loadNews()
     }
 }
