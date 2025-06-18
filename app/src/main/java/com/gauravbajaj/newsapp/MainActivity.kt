@@ -1,6 +1,5 @@
 package com.gauravbajaj.newsapp
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -22,20 +21,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.NavController
-import androidx.navigation.navOptions
 import com.gauravbajaj.newsapp.navigation.Screen
 import com.gauravbajaj.newsapp.ui.components.CommonTopBar
 import com.gauravbajaj.newsapp.ui.country_sources.CountrySourcesScreen
 import com.gauravbajaj.newsapp.ui.languages.LanguagesScreen
 import com.gauravbajaj.newsapp.ui.news_sources.NewsSourcesScreen
+import com.gauravbajaj.newsapp.ui.newslist.NewsListScreen
 import com.gauravbajaj.newsapp.ui.search.SearchScreen
 import com.gauravbajaj.newsapp.ui.theme.NewsAppTheme
 import com.gauravbajaj.newsapp.ui.topheadlines.TopHeadlinesScreen
-import com.gauravbajaj.newsapp.ui.newslist.NewsListScreen
 import com.gauravbajaj.newsapp.utils.CustomTabsHelper
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -46,8 +44,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             NewsAppTheme {
                 Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
                 ) {
                     MyNewsApp()
                 }
@@ -119,8 +116,7 @@ fun MyNewsApp() {
                 onBackPressed = { navController.popBackStack() },
                 onDoneClicked = { language ->
                     navController.navigate("${Screen.NewsList.route}?language=${language.lowercase()}")
-                }
-            )
+                })
         }
         composable(Screen.Search.route) {
             SearchScreen()
@@ -137,8 +133,7 @@ fun MainScreen(navController: NavController) {
                 text = LocalContext.current.resources.getString(R.string.app_name),
                 theme = MaterialTheme
             )
-        }
-    ) { padding ->
+        }) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -176,20 +171,9 @@ fun MainScreen(navController: NavController) {
     }
 }
 
-////                LanguagesScreen(navController)
-////            }
-////            composable(Screen.Search.route) {
-////                SearchScreen(navController)
-////            }
-//        }
-//    }
-//}
-//
 @Composable
 fun MainScreenButton(
-    text: String,
-    screen: Screen,
-    navController: NavController
+    text: String, screen: Screen, navController: NavController
 ) {
     Button(
         onClick = {
@@ -200,12 +184,10 @@ fun MainScreenButton(
                 launchSingleTop = true
                 restoreState = true
             }
-        },
-        modifier = Modifier
+        }, modifier = Modifier
             .fillMaxWidth(0.85f)  // 85% width (15% margin on each side)
             .height(56.dp * 1.2f)  // 20% taller than default Material button height
-            .padding(vertical = 8.dp),
-        shape = MaterialTheme.shapes.medium,  // Rounded corners
+            .padding(vertical = 8.dp), shape = MaterialTheme.shapes.medium,  // Rounded corners
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary
