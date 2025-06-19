@@ -98,6 +98,8 @@ You can connect with me on:
 │   │               │   │   ├── SourcesResponse.kt
 │   │               │   │   └── TopHeadlinesResponse.kt
 │   │               │   └── repository
+│   │               │       ├── CountriesRepository.kt
+│   │               │       ├── LanguagesRepository.kt
 │   │               │       ├── NewsRepository.kt
 │   │               │       ├── NewsSourcesRepository.kt
 │   │               │       ├── SearchRepository.kt
@@ -106,24 +108,29 @@ You can connect with me on:
 │   │               │   ├── module
 │   │               │   │   └── ApplicationModule.kt
 │   │               │   └── qualifiers.kt
+│   │               ├── navigation
+│   │               │   └── Screen.kt
 │   │               ├── ui
 │   │               │   ├── base
-│   │               │   │   ├── UiSearchState.kt
 │   │               │   │   ├── UiState.kt
 │   │               │   │   └── ViewModelProviderFactory.kt
+│   │               │   ├── components
+│   │               │   │   ├── CommonNetworkScreen.kt
+│   │               │   │   ├── CommonTopBar.kt
+│   │               │   │   ├── EmptyState.kt
+│   │               │   │   ├── ErrorAndRetryState.kt
+│   │               │   │   └── LoadingIndicator.kt
 │   │               │   ├── country_sources
-│   │               │   │   ├── CountrySourcesActivity.kt
+│   │               │   │   ├── CountrySourcesScreen.kt
 │   │               │   │   └── CountrySourcesViewModel.kt
 │   │               │   ├── languages
-│   │               │   │   ├── LanguagesActivity.kt
 │   │               │   │   ├── LanguagesScreen.kt
 │   │               │   │   └── LanguagesViewModel.kt
 │   │               │   ├── news_sources
-│   │               │   │   ├── NewsSourcesActivity.kt
 │   │               │   │   ├── NewsSourcesScreen.kt
 │   │               │   │   └── NewsSourcesViewModel.kt
 │   │               │   ├── newslist
-│   │               │   │   ├── NewsListActivity.kt
+│   │               │   │   ├── NewsListScreen.kt
 │   │               │   │   └── NewsListViewModel.kt
 │   │               │   ├── search
 │   │               │   │   ├── SearchActivity.kt
@@ -133,7 +140,6 @@ You can connect with me on:
 │   │               │   │   ├── Theme.kt
 │   │               │   │   └── Type.kt
 │   │               │   └── topheadlines
-│   │               │       ├── TopHeadlineActivity.kt
 │   │               │       ├── TopHeadlineViewModel.kt
 │   │               │       └── TopHeadlinesScreen.kt
 │   │               └── utils
@@ -142,43 +148,6 @@ You can connect with me on:
 │   │                   └── DateUtils.kt
 │   ├── new.xml
 │   └── res
-│       ├── drawable
-│       │   ├── ic_arrow_back.xml
-│       │   ├── ic_launcher_background.xml
-│       │   ├── ic_launcher_foreground.xml
-│       │   └── ic_placeholder.xml
-│       ├── font
-│       │   ├── poppins_bold.ttf
-│       │   ├── poppins_regular.ttf
-│       │   └── poppins_semibold.ttf
-│       ├── mipmap-anydpi-v26
-│       │   ├── ic_launcher.xml
-│       │   └── ic_launcher_round.xml
-│       ├── mipmap-hdpi
-│       │   ├── ic_launcher.webp
-│       │   └── ic_launcher_round.webp
-│       ├── mipmap-mdpi
-│       │   ├── ic_launcher.webp
-│       │   └── ic_launcher_round.webp
-│       ├── mipmap-xhdpi
-│       │   ├── ic_launcher.webp
-│       │   └── ic_launcher_round.webp
-│       ├── mipmap-xxhdpi
-│       │   ├── ic_launcher.webp
-│       │   └── ic_launcher_round.webp
-│       ├── mipmap-xxxhdpi
-│       │   ├── ic_launcher.webp
-│       │   └── ic_launcher_round.webp
-│       ├── values
-│       │   ├── colors.xml
-│       │   ├── strings.xml
-│       │   └── themes.xml
-│       ├── values-night
-│       │   └── themes.xml
-│       └── xml
-│           ├── backup_rules.xml
-│           ├── data_extraction_rules.xml
-│           └── network_security_config.xml
 └── test
     └── java
         └── com
@@ -190,14 +159,18 @@ You can connect with me on:
                     │   ├── api
                     │   │   └── FakeNetworkService.kt
                     │   └── repository
+                    │       ├── CountriesRepositoryTest.kt
+                    │       ├── LanguagesRepositoryTest.kt
                     │       ├── NewsRepositoryTest.kt
                     │       ├── NewsSourcesRepositoryTest.kt
                     │       └── TopHeadlineRepositoryTest.kt
                     ├── di
                     └── ui
+                        ├── country_sources
                         ├── test
                         └── topheadlines
                             └── TopHeadlineViewModelTest.kt
+
 
 ```
 ---
