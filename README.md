@@ -185,6 +185,15 @@ You can connect with me on:
 ### Did this project help you? Great...! Please show your love ❤️ by putting a ⭐ on this project ✌️
 
 ---
+# Project Set Up Instructions 
+
+### Setting up api key
+
+```
+Please set API_KEY property in local.properties file to build the project.
+To get the key, create an account on https://newsapi.org/ and create a key.
+```
+---
 ### License
 
 ```
